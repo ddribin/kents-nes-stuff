@@ -1,0 +1,91 @@
+.\"     Title: xm2nes
+.\"    Author: Kent Hansen
+.\" Generator: DocBook XSL Stylesheets v1.71.1 <http://docbook.sf.net/>
+.\"      Date: 01/11/2009
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "XM2NES" "1" "01/11/2009" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+xm2nes \- converts Fasttracker ][ eXtended Module (XM) files to Kent's NES music format
+.SH "SYNOPSIS"
+.HP 7
+\fBxm2nes\fR [\fBoption\fR...] {file}
+.SH "DESCRIPTION"
+.PP
+
+\fBxm2nes\fR
+reads an eXtended Module (XM) file and converts it to the format used by Kent's NES music player.
+.SH "OPTIONS"
+.PP
+\fB\-\-output\fR=\fIfile\fR
+.RS 4
+Store the output in
+\fIfile\fR. If this option is not specified, the output will be written to standard output.
+.RE
+.PP
+\fB\-\-channels\fR=\fIchannels\fR
+.RS 4
+Only process the channels defined by the list of
+\fIchannels\fR.
+.RE
+.PP
+\fB\-\-instruments\-map\fR=\fIfile\fR
+.RS 4
+Reads instrument mapping information from
+\fIfile\fR.
+.RE
+.PP
+\fB\-\-verbose\fR
+.RS 4
+Print progress information to standard output.
+.RE
+.PP
+\fB\-\-help\fR
+.RS 4
+Give a help list.
+.RE
+.PP
+\fB\-\-usage\fR
+.RS 4
+Give a short usage message.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print program version.
+.RE
+.SH "FILES"
+.SS "Instrument Mapping File"
+.PP
+This input file is optional; it enables custom mapping of input instruments to output instruments. The file is a plaintext file, each line containing one or more name:value pairs. Example:
+.PP
+source:10 target:0 transpose:\-6
+.PP
+The above line tells the converter to map instrument 10 in the input to instrument 0 in the output, and to transpose each note for that instrument by \-6 in the output.
+.SS "Output"
+.PP
+The output is assembly source code.
+.SH "EXAMPLES"
+.PP
+To convert
+mysong.xm:
+.PP
+
+\fB xm2nes mysong.xm \fR
+.PP
+To convert only channels 0 and 2 of
+mysong.xm:
+.PP
+
+\fB xm2nes \-\-channels=0,2 mysong.xm \fR
+.SH "AUTHOR"
+.PP
+\fBKent Hansen\fR
+.sp -1n
+.IP "" 4
+Author.

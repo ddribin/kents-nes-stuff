@@ -1,0 +1,171 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "/sw/share/xml/dtd/docbookx/4.5.0/docbookx.dtd">
+
+<refentry id="xm2nes">
+
+<refentryinfo>
+<author>
+<firstname>Kent</firstname>
+<surname>Hansen</surname>
+</author>
+</refentryinfo>
+
+<refmeta>
+<refentrytitle>xm2nes</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>xm2nes</refname>
+<refpurpose>converts Fasttracker ][ eXtended Module (XM) files to Kent's NES music format</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>xm2nes</command>
+<arg choice="opt" rep="repeat">
+  <option>option</option>
+</arg>
+<arg choice="req">file</arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+<para>
+<command>xm2nes</command> reads an eXtended Module (XM) file and
+converts it to the format used by Kent's NES music player.
+</para>
+</refsect1>
+
+<refsect1><title>Options</title>
+<variablelist>
+
+<varlistentry>
+<term>
+<option>--output</option>=<parameter>file</parameter>
+</term>
+<listitem>
+<para>
+Store the output in <parameter>file</parameter>.
+If this option is not specified, the output will be written to
+standard output.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--channels</option>=<parameter>channels</parameter>
+</term>
+<listitem>
+<para>
+Only process the channels defined by the list of <parameter>channels</parameter>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--instruments-map</option>=<parameter>file</parameter>
+</term>
+<listitem>
+<para>
+Reads instrument mapping information from <parameter>file</parameter>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--verbose</option>
+</term>
+<listitem>
+<para>
+Print progress information to standard output.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--help</option>
+</term>
+<listitem>
+<para>
+Give a help list.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--usage</option>
+</term>
+<listitem>
+<para>
+Give a short usage message.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--version</option>
+</term>
+<listitem>
+<para>
+Print program version.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</refsect1>
+
+<refsect1>
+<title>Files</title>
+<refsect2>
+<title>Instrument Mapping File</title>
+<para>
+This input file is optional; it enables custom mapping of input
+instruments to output instruments. The file is a plaintext file, each
+line containing one or more name:value pairs. Example:
+</para>
+<para>
+source:10 target:0 transpose:-6
+</para>
+<para>
+The above line tells the converter to map instrument 10 in the
+input to instrument 0 in the output, and to transpose each note
+for that instrument by -6 in the output.
+</para>
+</refsect2>
+<refsect2>
+<title>Output</title>
+<para>
+The output is assembly source code.
+</para>
+</refsect2>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+<para>
+To convert <literal>mysong.xm</literal>:
+</para>
+<para>
+<userinput>
+xm2nes mysong.xm
+</userinput>
+</para>
+<para>
+To convert only channels 0 and 2 of <literal>mysong.xm</literal>:
+</para>
+<para>
+<userinput>
+xm2nes --channels=0,2 mysong.xm
+</userinput>
+</para>
+</refsect1>
+
+</refentry>

@@ -1,0 +1,60 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>xm2nes</title><meta name="generator" content="DocBook XSL Stylesheets V1.71.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="refentry" lang="en"><a name="xm2nes"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>xm2nes &#8212; converts Fasttracker ][ eXtended Module (XM) files to Kent's NES music format</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">xm2nes</code>  [
+  <code class="option">option</code>
+...] {file}</p></div></div><div class="refsect1" lang="en"><a name="id454412"></a><h2>Description</h2><p>
+<span><strong class="command">xm2nes</strong></span> reads an eXtended Module (XM) file and
+converts it to the format used by Kent's NES music player.
+</p></div><div class="refsect1" lang="en"><a name="id454427"></a><h2>Options</h2><div class="variablelist"><dl><dt><span class="term">
+<code class="option">--output</code>=<em class="parameter"><code>file</code></em>
+</span></dt><dd><p>
+Store the output in <em class="parameter"><code>file</code></em>.
+If this option is not specified, the output will be written to
+standard output.
+</p></dd><dt><span class="term">
+<code class="option">--channels</code>=<em class="parameter"><code>channels</code></em>
+</span></dt><dd><p>
+Only process the channels defined by the list of <em class="parameter"><code>channels</code></em>.
+</p></dd><dt><span class="term">
+<code class="option">--instruments-map</code>=<em class="parameter"><code>file</code></em>
+</span></dt><dd><p>
+Reads instrument mapping information from <em class="parameter"><code>file</code></em>.
+</p></dd><dt><span class="term">
+<code class="option">--verbose</code>
+</span></dt><dd><p>
+Print progress information to standard output.
+</p></dd><dt><span class="term">
+<code class="option">--help</code>
+</span></dt><dd><p>
+Give a help list.
+</p></dd><dt><span class="term">
+<code class="option">--usage</code>
+</span></dt><dd><p>
+Give a short usage message.
+</p></dd><dt><span class="term">
+<code class="option">--version</code>
+</span></dt><dd><p>
+Print program version.
+</p></dd></dl></div></div><div class="refsect1" lang="en"><a name="id454583"></a><h2>Files</h2><div class="refsect2" lang="en"><a name="id454588"></a><h3>Instrument Mapping File</h3><p>
+This input file is optional; it enables custom mapping of input
+instruments to output instruments. The file is a plaintext file, each
+line containing one or more name:value pairs. Example:
+</p><p>
+source:10 target:0 transpose:-6
+</p><p>
+The above line tells the converter to map instrument 10 in the
+input to instrument 0 in the output, and to transpose each note
+for that instrument by -6 in the output.
+</p></div><div class="refsect2" lang="en"><a name="id454611"></a><h3>Output</h3><p>
+The output is assembly source code.
+</p></div></div><div class="refsect1" lang="en"><a name="id454622"></a><h2>Examples</h2><p>
+To convert <code class="literal">mysong.xm</code>:
+</p><p>
+<strong class="userinput"><code>
+xm2nes mysong.xm
+</code></strong>
+</p><p>
+To convert only channels 0 and 2 of <code class="literal">mysong.xm</code>:
+</p><p>
+<strong class="userinput"><code>
+xm2nes --channels=0,2 mysong.xm
+</code></strong>
+</p></div></div></body></html>

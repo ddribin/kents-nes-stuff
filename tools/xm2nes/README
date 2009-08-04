@@ -1,0 +1,7 @@
+This is xm2nes, a tool that converts Fasttracker ][ eXtended Module (XM)
+files to a format suitable for use by Kent's NES music player.
+
+See INSTALL for installation instructions.
+
+See doc/index.html for documentation, or do "man xm2nes" after
+installation.
