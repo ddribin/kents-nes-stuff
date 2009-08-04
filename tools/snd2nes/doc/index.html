@@ -1,0 +1,36 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>snd2nes</title><meta name="generator" content="DocBook XSL Stylesheets V1.71.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="refentry" lang="en"><a name="snd2nes"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>snd2nes &#8212; converts a sound file to NES DMC format</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">snd2nes</code>  [
+  <code class="option">option</code>
+...] {file}</p></div></div><div class="refsect1" lang="en"><a name="id454412"></a><h2>Description</h2><p>
+<span><strong class="command">snd2nes</strong></span> reads a sound file and
+converts it to the format supported by the NES DMC hardware.
+</p></div><div class="refsect1" lang="en"><a name="id454427"></a><h2>Options</h2><div class="variablelist"><dl><dt><span class="term">
+<code class="option">--output</code>=<em class="parameter"><code>file</code></em>
+</span></dt><dd><p>
+Store the output in <em class="parameter"><code>file</code></em>.
+If this option is not specified, the output will be written to
+standard output.
+</p></dd><dt><span class="term">
+<code class="option">--verbose</code>
+</span></dt><dd><p>
+Print progress information to standard output.
+</p></dd><dt><span class="term">
+<code class="option">--help</code>
+</span></dt><dd><p>
+Give a help list.
+</p></dd><dt><span class="term">
+<code class="option">--usage</code>
+</span></dt><dd><p>
+Give a short usage message.
+</p></dd><dt><span class="term">
+<code class="option">--version</code>
+</span></dt><dd><p>
+Print program version.
+</p></dd></dl></div></div><div class="refsect1" lang="en"><a name="id454528"></a><h2>Files</h2><div class="refsect2" lang="en"><a name="id454533"></a><h3>Output</h3><p>
+The output is raw DMC data suitable for playback on the NES.
+</p></div></div><div class="refsect1" lang="en"><a name="id454545"></a><h2>Examples</h2><p>
+To convert <code class="literal">mysound.wav</code>:
+</p><p>
+<strong class="userinput"><code>
+snd2nes mysound.wav
+</code></strong>
+</p></div></div></body></html>

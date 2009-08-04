@@ -1,0 +1,125 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "/sw/share/xml/dtd/docbookx/4.5.0/docbookx.dtd">
+
+<refentry id="snd2nes">
+
+<refentryinfo>
+<author>
+<firstname>Kent</firstname>
+<surname>Hansen</surname>
+</author>
+</refentryinfo>
+
+<refmeta>
+<refentrytitle>snd2nes</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>snd2nes</refname>
+<refpurpose>converts a sound file to NES DMC format</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>snd2nes</command>
+<arg choice="opt" rep="repeat">
+  <option>option</option>
+</arg>
+<arg choice="req">file</arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+<para>
+<command>snd2nes</command> reads a sound file and
+converts it to the format supported by the NES DMC hardware.
+</para>
+</refsect1>
+
+<refsect1><title>Options</title>
+<variablelist>
+
+<varlistentry>
+<term>
+<option>--output</option>=<parameter>file</parameter>
+</term>
+<listitem>
+<para>
+Store the output in <parameter>file</parameter>.
+If this option is not specified, the output will be written to
+standard output.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--verbose</option>
+</term>
+<listitem>
+<para>
+Print progress information to standard output.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--help</option>
+</term>
+<listitem>
+<para>
+Give a help list.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--usage</option>
+</term>
+<listitem>
+<para>
+Give a short usage message.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--version</option>
+</term>
+<listitem>
+<para>
+Print program version.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</refsect1>
+
+<refsect1>
+<title>Files</title>
+<refsect2>
+<title>Output</title>
+<para>
+The output is raw DMC data suitable for playback on the NES.
+</para>
+</refsect2>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+<para>
+To convert <literal>mysound.wav</literal>:
+</para>
+<para>
+<userinput>
+snd2nes mysound.wav
+</userinput>
+</para>
+</refsect1>
+
+</refentry>

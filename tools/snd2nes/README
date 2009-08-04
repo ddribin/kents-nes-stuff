@@ -1,0 +1,7 @@
+This is snd2nes, a tool that converts sound files to NES DMC
+channel format.
+
+See INSTALL for installation instructions.
+
+See doc/index.html for documentation, or do "man snd2nes" after
+installation.
