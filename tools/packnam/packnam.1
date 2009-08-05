@@ -1,0 +1,138 @@
+.\"     Title: packnam
+.\"    Author: Kent Hansen
+.\" Generator: DocBook XSL Stylesheets v1.71.1 <http://docbook.sf.net/>
+.\"      Date: 03/31/2008
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "PACKNAM" "1" "03/31/2008" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+packnam \- encodes a raw NES nametable
+.SH "SYNOPSIS"
+.HP 8
+\fBpacknam\fR [\fBoption\fR...] {file}
+.SH "DESCRIPTION"
+.PP
+
+\fBpacknam\fR
+reads a raw NES nametable (merely an array of tile indexes \-\- bytes) and encodes it in a simple, space\-efficient format that can be readily decoded by 6502 code (i.e. so the graphic that the nametable represents can be displayed on the NES).
+.PP
+As a basic illustration of what packnam does, assume that the input is a nametable containing the following tile indexes (byte values):
+.PP
+0 0 0 1 1 2 3 4 1 1 1 1 1 3 3 0 0 0 0 1 0 1 0 4
+.PP
+The nametable is 24 bytes in size. Assume it represents a graphic consisting of 6x4 tiles (6*4=24); packnam should thus be invoked with the option
+\-\-width=6. packnam will produce an encoded nametable that represents the graphic as a series of rows:
+.PP
+row 0: 0 0 0 1 1 2
+.PP
+row 1: 3 4 1 1 1 1
+.PP
+row 2: 1 3 3 0 0 0
+.PP
+row 3: 0 1 0 1 0 4
+.SH "OPTIONS"
+.PP
+\fB\-\-width\fR=\fInum\fR
+.RS 4
+Use
+\fInum\fR
+as nametable width (tiles per row). If this option is not specified, the width is 32 (i.e. the full width of a NES hardware nametable).
+.RE
+.PP
+\fB\-\-vram\-address\fR=\fInum\fR
+.RS 4
+Use
+\fInum\fR
+as VRAM start address (i.e. where the first row will be decoded to). This is used to control where in the NES hardware nametable the tile indexes should be written to; for example, to center the graphic or right\-align it. If this option is not specified, the VRAM start address will be 0x2000 (beginning of NES hardware nametable #0).
+.RE
+.PP
+\fB\-\-output\fR=\fIfile\fR
+.RS 4
+Store encoded nametable in
+\fIfile\fR. If this option is not specified, the data will be written to
+packnam.dat.
+.RE
+.PP
+\fB\-\-zero\-terminate\fR
+.RS 4
+Zero\-terminate the output (i.e. add a trailing 0\-byte).
+.RE
+.PP
+\fB\-\-verbose\fR
+.RS 4
+Print progress information to standard output.
+.RE
+.PP
+\fB\-\-help\fR
+.RS 4
+Give a help list.
+.RE
+.PP
+\fB\-\-usage\fR
+.RS 4
+Give a short usage message.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print program version.
+.RE
+.SH "FILES"
+.SS "Input"
+.PP
+The input nametable is typically one produced by the
+\fBpackchr\fR
+tool, or by your favorite hex editor (extra points!). It's just a series of tile indexes, each index being one byte (references a tile in the range 0..255).
+.SS "Output"
+.PP
+The output is a sequence of strings of the following format:
+.PP
+byte 0: high VRAM address
+.PP
+byte 1: low VRAM address
+.PP
+byte 2: bits 0\-5: length of data string (repeat count if RLE); bit 6: is data RLE? (1 = yes); bit 7: VRAM address increment (0 = 1, 1 = 32)
+.PP
+byte 3\-..: data. Only 1 byte if string is RLE
+.PP
+6502 code for decoding data of this format can be found elsewhere, e.g. in the NeoToxin sources (ppuwrite.asm). In your 6502 sources, you can then do something like:
+.PP
+
+.sp
+.RS 4
+.nf
+  my_nametable_data:
+  .incbin "mynametable.dat" ; mynametable.dat produced by packnam
+  .db 0 ; data terminator
+
+  ...
+
+  lda #<my_nametable_data
+  ldy #>my_nametable_data
+  jsr write_ppu_data_at     ; call decoder function
+.fi
+.RE
+.sp
+.PP
+packnam does not deal with CHR data, palette data or attribute data; you are responsible for setting up those things when displaying the image on the NES. (A simple way of setting up the palette and attribute table is by "tacking on" their data to packnam's output; use the string format described above.)
+.SH "EXAMPLES"
+.PP
+To pack
+mynametab.nam, using 6 tiles per row and putting the graphic halfway down the screen:
+.PP
+
+\fB packnam \-\-width=6 \-\-vram\-address=0x21B0 mynametab.nam \fR
+.SH "SEE ALSO"
+.PP
+packchr(1)
+.SH "AUTHOR"
+.PP
+\fBKent Hansen\fR
+.sp -1n
+.IP "" 4
+Author.

@@ -1,0 +1,8 @@
+This is packnam, a tool that converts a raw NES nametable (that is, an
+array of tile indexes) into a format that can be readily decoded by
+6502 code (i.e. so the image can be displayed on the NES).
+
+See INSTALL for installation instructions.
+
+See doc/index.html for documentation, or do "man packnam" after
+installation.

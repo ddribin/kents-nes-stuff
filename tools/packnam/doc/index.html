@@ -1,0 +1,116 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>packnam</title><meta name="generator" content="DocBook XSL Stylesheets V1.71.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="refentry" lang="en"><a name="packnam"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>packnam &#8212; encodes a raw NES nametable</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">packnam</code>  [
+  <code class="option">option</code>
+...] {file}</p></div></div><div class="refsect1" lang="en"><a name="id454503"></a><h2>Description</h2><p>
+<span><strong class="command">packnam</strong></span> reads a raw NES nametable (merely an array
+of tile indexes -- bytes) and encodes it in a simple, space-efficient
+format that can be readily decoded by 6502 code (i.e. so the graphic
+that the nametable represents can be displayed on the NES).
+</p><p>
+As a basic illustration of what packnam does, assume that the input is
+a nametable containing the following tile indexes (byte values):
+</p><p>
+0 0 0 1 1 2 3 4 1 1 1 1 1 3 3 0 0 0 0 1 0 1 0 4
+</p><p>
+The nametable is 24 bytes in size. Assume it represents a graphic
+consisting of 6x4 tiles (6*4=24); packnam should thus be invoked with
+the option <code class="literal">--width=6</code>. packnam will produce an
+encoded nametable that represents the graphic as a series of rows:
+</p><p>
+row 0: 0 0 0 1 1 2
+</p><p>
+row 1: 3 4 1 1 1 1
+</p><p>
+row 2: 1 3 3 0 0 0
+</p><p>
+row 3: 0 1 0 1 0 4
+</p></div><div class="refsect1" lang="en"><a name="id454556"></a><h2>Options</h2><div class="variablelist"><dl><dt><span class="term">
+<code class="option">--width</code>=<em class="parameter"><code>num</code></em>
+</span></dt><dd><p>
+Use <em class="parameter"><code>num</code></em> as nametable width (tiles per row). If
+this option is not specified, the width is 32 (i.e. the full width of
+a NES hardware nametable).
+</p></dd><dt><span class="term">
+<code class="option">--vram-address</code>=<em class="parameter"><code>num</code></em>
+</span></dt><dd><p>
+Use <em class="parameter"><code>num</code></em> as VRAM start address (i.e. where the
+first row will be decoded to). This is used to control where in the
+NES hardware nametable the tile indexes should be written to; for
+example, to center the graphic or right-align it. If this option is
+not specified, the VRAM start address will be 0x2000 (beginning of NES
+hardware nametable #0).
+</p></dd><dt><span class="term">
+<code class="option">--output</code>=<em class="parameter"><code>file</code></em>
+</span></dt><dd><p>
+Store encoded nametable in <em class="parameter"><code>file</code></em>. If this option
+is not specified, the data will be written
+to <code class="literal">packnam.dat</code>.
+</p></dd><dt><span class="term">
+<code class="option">--zero-terminate</code>
+</span></dt><dd><p>
+Zero-terminate the output (i.e. add a trailing 0-byte).
+</p></dd><dt><span class="term">
+<code class="option">--verbose</code>
+</span></dt><dd><p>
+Print progress information to standard output.
+</p></dd><dt><span class="term">
+<code class="option">--help</code>
+</span></dt><dd><p>
+Give a help list.
+</p></dd><dt><span class="term">
+<code class="option">--usage</code>
+</span></dt><dd><p>
+Give a short usage message.
+</p></dd><dt><span class="term">
+<code class="option">--version</code>
+</span></dt><dd><p>
+Print program version.
+</p></dd></dl></div></div><div class="refsect1" lang="en"><a name="id454740"></a><h2>Files</h2><div class="refsect2" lang="en"><a name="id454745"></a><h3>Input</h3><p>
+The input nametable is typically one produced by
+the <span><strong class="command">packchr</strong></span> tool, or by your favorite hex editor
+(extra points!). It's just a series of tile indexes, each index being one
+byte (references a tile in the range 0..255).
+</p></div><div class="refsect2" lang="en"><a name="id454764"></a><h3>Output</h3><p>
+The output is a sequence of strings of the following format:
+</p><p>
+byte 0: high VRAM address
+</p><p>
+byte 1: low VRAM address
+</p><p>
+byte 2: bits 0-5: length of data string (repeat count if RLE);
+        bit 6:    is data RLE? (1 = yes);
+        bit 7:    VRAM address increment (0 = 1, 1 = 32)
+</p><p>
+byte 3-..: data. Only 1 byte if string is RLE
+</p><p>
+6502 code for decoding data of this format can be found
+elsewhere, e.g. in the NeoToxin sources (ppuwrite.asm).
+In your 6502 sources, you can then do something like:
+</p><p>
+</p><pre class="programlisting">
+  my_nametable_data:
+  .incbin "mynametable.dat" ; mynametable.dat produced by packnam
+  .db 0 ; data terminator
+
+  ...
+
+  lda #&lt;my_nametable_data
+  ldy #&gt;my_nametable_data
+  jsr write_ppu_data_at     ; call decoder function
+</pre><p>
+</p><p>
+packnam does not deal with CHR data, palette data or
+attribute data; you are responsible for setting up those
+things when displaying the image on the NES.
+(A simple way of setting up the palette and attribute
+table is by "tacking on" their data to packnam's output;
+use the string format described above.)
+</p></div></div><div class="refsect1" lang="en"><a name="id454822"></a><h2>Examples</h2><p>
+To pack <code class="literal">mynametab.nam</code>, using 6 tiles per row and
+putting the graphic halfway down the screen:
+</p><p>
+<strong class="userinput"><code>
+packnam --width=6 --vram-address=0x21B0 mynametab.nam
+</code></strong>
+</p></div><div class="refsect1" lang="en"><a name="id454847"></a><h2>See Also</h2><p>
+packchr(1)
+</p></div></div></body></html>
