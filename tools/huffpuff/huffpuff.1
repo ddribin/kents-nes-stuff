@@ -1,0 +1,179 @@
+.\"     Title: huffpuff
+.\"    Author: Kent Hansen
+.\" Generator: DocBook XSL Stylesheets v1.71.1 <http://docbook.sf.net/>
+.\"      Date: 03/30/2008
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "HUFFPUFF" "1" "03/30/2008" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+huffpuff \- encodes strings using Huffman compression
+.SH "SYNOPSIS"
+.HP 9
+\fBhuffpuff\fR [\fBoption\fR...] [file]
+.SH "DESCRIPTION"
+.PP
+
+\fBhuffpuff\fR
+takes as input a plaintext file containing the ASCII strings to compress. Each line is regarded as a string to be encoded. Long strings can span several lines in the file by using backslash\-newline. Empty lines are ignored. Lines that begin with the # character are ignored, i.e. they can be used as comments (use \\# to start a real string with #). If no input file is given, input will be read from standard input.
+.SH "OPTIONS"
+.PP
+\fB\-\-character\-map\fR=\fIfile\fR
+.RS 4
+Transform characters according to the rules given in
+\fIfile\fR
+before encoding. Use this option if you want to produce strings that use a custom character encoding (i.e. different from ASCII).
+.RE
+.PP
+\fB\-\-table\-output\fR=\fIfile\fR
+.RS 4
+Store Huffman decoder table definition in
+\fIfile\fR. If this option is not specified, the definition will be written to
+huffpuff.tab.asm.
+.RE
+.PP
+\fB\-\-data\-output\fR=\fIfile\fR
+.RS 4
+Store Huffman string data definition in
+\fIfile\fR. If this option is not specified, the definition will be written to
+huffpuff.dat.asm.
+.RE
+.PP
+\fB\-\-table\-label\fR=\fIlabel\fR
+.RS 4
+Create a symbolic label named
+\fIlabel\fR
+preceding the Huffman decoder table definition.
+.RE
+.PP
+\fB\-\-node\-label\-prefix\fR=\fIprefix\fR
+.RS 4
+Prefix symbolic labels in the Huffman decoder table definition by
+\fIprefix\fR.
+.RE
+.PP
+\fB\-\-string\-label\-prefix\fR=\fIprefix\fR
+.RS 4
+Prefix symbolic labels in the Huffman string data definition by
+\fIprefix\fR.
+.RE
+.PP
+\fB\-\-generate\-string\-table\fR
+.RS 4
+Generate a string pointer table. The table definition will precede the string data in the output. Such a pointer table makes it possible for other data structures to refer to strings by their index rather than by their address.
+.RE
+.PP
+\fB\-\-string\-table\-label\fR=\fIlabel\fR
+.RS 4
+Create a symbolic label named
+\fIlabel\fR
+preceding the string pointer table definition. This option automatically enables \-\-generate\-string\-table.
+.RE
+.PP
+\fB\-\-append\-byte\fR=\fIvalue\fR
+.RS 4
+Append
+\fIvalue\fR
+to every string before encoding.
+\fIvalue\fR
+will effectively serve as the end\-of\-string token when a string is decoded (huffpuff does not automatically zero\-terminate strings).
+.RE
+.PP
+\fB\-\-ignore\-case\fR
+.RS 4
+Convert characters to lower\-case before processing. This reduces the number of unique symbols and hence improves the compression ratio. A text decoder can capitalize words on the fly (e.g. by looking at punctuation, or by reading "markup" characters that upper\-case one or more of the following letters), so that the end result will still look proper.
+.RE
+.PP
+\fB\-\-verbose\fR
+.RS 4
+Print progress information to standard output.
+.RE
+.PP
+\fB\-\-help\fR
+.RS 4
+Give a help list.
+.RE
+.PP
+\fB\-\-usage\fR
+.RS 4
+Give a short usage message.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print program version.
+.RE
+.SH "FILES"
+.SS "Output"
+.PP
+The huffpuff output consists of two basic parts: The Huffman decoder table definition, and the encoded string data definition. Both parts consist of 6502 assembly compatible with the XORcyst assembler. Add huffpuff's output to your project, then use the 6502 Huffman decoder (part of the NeoToxin sources; huffman.asm) to decode strings.
+.SS "Character Map"
+.PP
+The character map file (specified with the \-\-character\-map option) is a plaintext file that contains rules for mapping ASCII characters to other values; i.e. to define a custom character set.
+\fBhuffpuff\fR
+applies this transformation before the Huffman compression is performed.
+.PP
+There are two types of character mapping rules:
+.PP
+\fIcharacter\fR=\fIvalue\fR
+.RS 4
+Specifies that the given
+\fIcharacter\fR
+should be mapped to the given
+\fIvalue\fR.
+.RE
+.PP
+\fIlow\-character\fR\-\fIhigh\-character\fR=\fIbase\-value\fR
+.RS 4
+Specifies a mapping for a range of characters. The characters are those from
+\fIlow\-character\fR
+to
+\fIhigh\-character\fR, inclusive.
+\fIlow\-character\fR
+will be mapped to
+\fIbase\-value\fR,
+\fIlow\-character\fR+1 will be mapped to
+\fIbase\-value\fR+1, and so on. This type of rule is typically used to "relocate" (groups of) alpha(numeric) characters (e.g. A\-Z=0xC0).
+.RE
+.PP
+Lines that begin with the # character are ignored, i.e. they can be used as comments (use \\# to specify a rule for mapping # itself).
+.SH "EXAMPLES"
+.PP
+To encode
+strings.txt
+as\-is (no character mapping):
+.PP
+
+\fB huffpuff strings.txt \fR
+.PP
+To encode
+strings.txt
+after first transposing the input according to the character map
+example.tbl:
+.PP
+
+\fB huffpuff \-\-character\-map=example.tbl strings.txt \fR
+.PP
+To encode
+strings.txt
+and store the output in given files:
+.PP
+
+\fB huffpuff \-\-table\-output=myhufftab.asm \-\-data\-output=myhuffdata.asm strings.txt \fR
+.PP
+To encode
+strings.txt
+and cause every string to be 0\-terminated:
+.PP
+
+\fB huffpuff \-\-append\-byte=0 strings.txt \fR
+.SH "AUTHOR"
+.PP
+\fBKent Hansen\fR
+.sp -1n
+.IP "" 4
+Author.

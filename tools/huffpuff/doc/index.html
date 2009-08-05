@@ -1,0 +1,126 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>huffpuff</title><meta name="generator" content="DocBook XSL Stylesheets V1.71.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="refentry" lang="en"><a name="huffpuff"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>huffpuff &#8212; encodes strings using Huffman compression</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">huffpuff</code>  [
+  <code class="option">option</code>
+...] [file]</p></div></div><div class="refsect1" lang="en"><a name="id454504"></a><h2>Description</h2><p>
+<span><strong class="command">huffpuff</strong></span> takes as input a plaintext file containing
+the ASCII strings to compress. Each line is regarded as a string to be
+encoded. Long strings can span several lines in the file by using
+backslash-newline. Empty lines are ignored. Lines that begin with the
+# character are ignored, i.e. they can be used as comments (use \# to
+start a real string with #). If no input file is given, input will be
+read from standard input.
+</p></div><div class="refsect1" lang="en"><a name="id454524"></a><h2>Options</h2><div class="variablelist"><dl><dt><span class="term">
+<code class="option">--character-map</code>=<em class="parameter"><code>file</code></em>
+</span></dt><dd><p>
+Transform characters according to the rules given in <em class="parameter"><code>file</code></em> before encoding.
+Use this option if you want to produce strings that use a custom character encoding (i.e.
+different from ASCII).
+</p></dd><dt><span class="term">
+<code class="option">--table-output</code>=<em class="parameter"><code>file</code></em>
+</span></dt><dd><p>
+Store Huffman decoder table definition in <em class="parameter"><code>file</code></em>. If this option is not
+specified, the definition will be written
+to <code class="literal">huffpuff.tab.asm</code>.
+</p></dd><dt><span class="term">
+<code class="option">--data-output</code>=<em class="parameter"><code>file</code></em>
+</span></dt><dd><p>
+Store Huffman string data definition in <em class="parameter"><code>file</code></em>. If this option is not
+specified, the definition will be written
+to <code class="literal">huffpuff.dat.asm</code>.
+</p></dd><dt><span class="term">
+<code class="option">--table-label</code>=<em class="parameter"><code>label</code></em>
+</span></dt><dd><p>
+Create a symbolic label named <em class="parameter"><code>label</code></em> preceding the Huffman decoder table definition.
+</p></dd><dt><span class="term">
+<code class="option">--node-label-prefix</code>=<em class="parameter"><code>prefix</code></em>
+</span></dt><dd><p>
+Prefix symbolic labels in the Huffman decoder table definition by <em class="parameter"><code>prefix</code></em>.
+</p></dd><dt><span class="term">
+<code class="option">--string-label-prefix</code>=<em class="parameter"><code>prefix</code></em>
+</span></dt><dd><p>
+Prefix symbolic labels in the Huffman string data definition by <em class="parameter"><code>prefix</code></em>.
+</p></dd><dt><span class="term">
+<code class="option">--generate-string-table</code>
+</span></dt><dd><p>
+Generate a string pointer table. The table definition will precede the string data in the output.
+Such a pointer table makes it possible for other data structures to refer to strings by their
+index rather than by their address.
+</p></dd><dt><span class="term">
+<code class="option">--string-table-label</code>=<em class="parameter"><code>label</code></em>
+</span></dt><dd><p>
+Create a symbolic label named <em class="parameter"><code>label</code></em> preceding the string pointer table definition.
+This option automatically enables --generate-string-table.
+</p></dd><dt><span class="term">
+<code class="option">--append-byte</code>=<em class="parameter"><code>value</code></em>
+</span></dt><dd><p>
+Append <em class="parameter"><code>value</code></em> to every string before encoding. <em class="parameter"><code>value</code></em> will
+effectively serve as the end-of-string token when a string is decoded (huffpuff does not automatically
+zero-terminate strings).
+</p></dd><dt><span class="term">
+<code class="option">--ignore-case</code>
+</span></dt><dd><p>
+Convert characters to lower-case before processing. This reduces the number of unique symbols and hence
+improves the compression ratio. A text decoder can capitalize words on the fly (e.g. by looking at
+punctuation, or by reading "markup" characters that upper-case one or more of the following letters),
+so that the end result will still look proper.
+</p></dd><dt><span class="term">
+<code class="option">--verbose</code>
+</span></dt><dd><p>
+Print progress information to standard output.
+</p></dd><dt><span class="term">
+<code class="option">--help</code>
+</span></dt><dd><p>
+Give a help list.
+</p></dd><dt><span class="term">
+<code class="option">--usage</code>
+</span></dt><dd><p>
+Give a short usage message.
+</p></dd><dt><span class="term">
+<code class="option">--version</code>
+</span></dt><dd><p>
+Print program version.
+</p></dd></dl></div></div><div class="refsect1" lang="en"><a name="id454881"></a><h2>Files</h2><div class="refsect2" lang="en"><a name="id454886"></a><h3>Output</h3><p>
+The huffpuff output consists of two basic parts: The Huffman decoder
+table definition, and the encoded string data definition. Both parts
+consist of 6502 assembly compatible with the XORcyst assembler. Add
+huffpuff's output to your project, then use the 6502 Huffman decoder
+(part of the NeoToxin sources; huffman.asm) to decode strings.
+</p></div><div class="refsect2" lang="en"><a name="id454902"></a><h3>Character Map</h3><p>
+The character map file (specified with the --character-map option) 
+is a plaintext file that contains rules for mapping ASCII characters
+to other values; i.e. to define a custom character set.
+<span><strong class="command">huffpuff</strong></span> applies this transformation before the
+Huffman compression is performed.
+</p><p>
+There are two types of character mapping rules:
+</p><div class="variablelist"><dl><dt><span class="term"><em class="parameter"><code>character</code></em>=<em class="parameter"><code>value</code></em></span></dt><dd><p>
+Specifies that the given <em class="parameter"><code>character</code></em> should be mapped to the given <em class="parameter"><code>value</code></em>.
+</p></dd><dt><span class="term"><em class="parameter"><code>low-character</code></em>-<em class="parameter"><code>high-character</code></em>=<em class="parameter"><code>base-value</code></em></span></dt><dd><p>
+Specifies a mapping for a range of characters. The characters are those from <em class="parameter"><code>low-character</code></em> to <em class="parameter"><code>high-character</code></em>, inclusive. <em class="parameter"><code>low-character</code></em> will be mapped to <em class="parameter"><code>base-value</code></em>, <em class="parameter"><code>low-character</code></em>+1 will be mapped to <em class="parameter"><code>base-value</code></em>+1, and so on. This type of rule is typically used to "relocate" (groups of) alpha(numeric) characters (e.g. A-Z=0xC0).
+</p></dd></dl></div><p>
+Lines that begin with the # character are ignored, i.e. they can be
+used as comments (use \# to specify a rule for mapping # itself).
+</p></div></div><div class="refsect1" lang="en"><a name="id455026"></a><h2>Examples</h2><p>
+To encode <code class="literal">strings.txt</code> as-is (no character mapping):
+</p><p>
+<strong class="userinput"><code>
+huffpuff strings.txt
+</code></strong>
+</p><p>
+To encode <code class="literal">strings.txt</code> after first transposing the input according to the character map <code class="literal">example.tbl</code>:
+</p><p>
+<strong class="userinput"><code>
+huffpuff --character-map=example.tbl strings.txt
+</code></strong>
+</p><p>
+To encode <code class="literal">strings.txt</code> and store the output in given files:
+</p><p>
+<strong class="userinput"><code>
+huffpuff --table-output=myhufftab.asm --data-output=myhuffdata.asm strings.txt
+</code></strong>
+</p><p>
+To encode <code class="literal">strings.txt</code> and cause every string to be 0-terminated:
+</p><p>
+<strong class="userinput"><code>
+huffpuff --append-byte=0 strings.txt
+</code></strong>
+</p></div></div></body></html>

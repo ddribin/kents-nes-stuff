@@ -1,0 +1,12 @@
+# This is just a comment.
+# Empty lines are ignored:
+
+# The next line is the first string we actually want to encode.
+Hello, my darling!
+
+# Backslash-newline is used to define strings that span several lines.
+Hi there. \
+This is a string that spans several lines. \
+Pretty fancy stuff.
+
+Just another string, nothing special.

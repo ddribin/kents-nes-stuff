@@ -1,0 +1,12 @@
+This is huffpuff, a tool that encodes strings using Huffman compression.
+
+huffpuff is specialized for NES development, thus the only supported
+output format is 6502 assembly.
+
+huffpuff is intended to be used to compress (large amounts of) in-game
+text, e.g. for cut scenes or NPC interaction.
+
+See INSTALL for installation instructions.
+
+See doc/index.html for documentation, or do "man huffpuff" after
+installation.

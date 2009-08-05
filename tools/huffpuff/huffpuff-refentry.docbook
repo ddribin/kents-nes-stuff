@@ -1,0 +1,312 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "/sw/share/xml/dtd/docbookx/4.5.0/docbookx.dtd">
+
+<refentry id="huffpuff">
+
+<refentryinfo>
+<author>
+<firstname>Kent</firstname>
+<surname>Hansen</surname>
+</author>
+</refentryinfo>
+
+<refmeta>
+<refentrytitle>huffpuff</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>huffpuff</refname>
+<refpurpose>encodes strings using Huffman compression</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>huffpuff</command>
+<arg choice="opt" rep="repeat">
+  <option>option</option>
+</arg>
+<arg choice="opt">file</arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+<para>
+<command>huffpuff</command> takes as input a plaintext file containing
+the ASCII strings to compress. Each line is regarded as a string to be
+encoded. Long strings can span several lines in the file by using
+backslash-newline. Empty lines are ignored. Lines that begin with the
+# character are ignored, i.e. they can be used as comments (use \# to
+start a real string with #). If no input file is given, input will be
+read from standard input.
+</para>
+</refsect1>
+
+<refsect1><title>Options</title>
+<variablelist>
+
+<varlistentry>
+<term>
+<option>--character-map</option>=<parameter>file</parameter>
+</term>
+<listitem>
+<para>
+Transform characters according to the rules given in <parameter>file</parameter> before encoding.
+Use this option if you want to produce strings that use a custom character encoding (i.e.
+different from ASCII).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--table-output</option>=<parameter>file</parameter>
+</term>
+<listitem>
+<para>
+Store Huffman decoder table definition in <parameter>file</parameter>. If this option is not
+specified, the definition will be written
+to <literal>huffpuff.tab.asm</literal>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--data-output</option>=<parameter>file</parameter>
+</term>
+<listitem>
+<para>
+Store Huffman string data definition in <parameter>file</parameter>. If this option is not
+specified, the definition will be written
+to <literal>huffpuff.dat.asm</literal>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--table-label</option>=<parameter>label</parameter>
+</term>
+<listitem>
+<para>
+Create a symbolic label named <parameter>label</parameter> preceding the Huffman decoder table definition.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--node-label-prefix</option>=<parameter>prefix</parameter>
+</term>
+<listitem>
+<para>
+Prefix symbolic labels in the Huffman decoder table definition by <parameter>prefix</parameter>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--string-label-prefix</option>=<parameter>prefix</parameter>
+</term>
+<listitem>
+<para>
+Prefix symbolic labels in the Huffman string data definition by <parameter>prefix</parameter>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--generate-string-table</option>
+</term>
+<listitem>
+<para>
+Generate a string pointer table. The table definition will precede the string data in the output.
+Such a pointer table makes it possible for other data structures to refer to strings by their
+index rather than by their address.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--string-table-label</option>=<parameter>label</parameter>
+</term>
+<listitem>
+<para>
+Create a symbolic label named <parameter>label</parameter> preceding the string pointer table definition.
+This option automatically enables --generate-string-table.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--append-byte</option>=<parameter>value</parameter>
+</term>
+<listitem>
+<para>
+Append <parameter>value</parameter> to every string before encoding. <parameter>value</parameter> will
+effectively serve as the end-of-string token when a string is decoded (huffpuff does not automatically
+zero-terminate strings).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--ignore-case</option>
+</term>
+<listitem>
+<para>
+Convert characters to lower-case before processing. This reduces the number of unique symbols and hence
+improves the compression ratio. A text decoder can capitalize words on the fly (e.g. by looking at
+punctuation, or by reading "markup" characters that upper-case one or more of the following letters),
+so that the end result will still look proper.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--verbose</option>
+</term>
+<listitem>
+<para>
+Print progress information to standard output.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--help</option>
+</term>
+<listitem>
+<para>
+Give a help list.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--usage</option>
+</term>
+<listitem>
+<para>
+Give a short usage message.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--version</option>
+</term>
+<listitem>
+<para>
+Print program version.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</refsect1>
+
+<refsect1>
+<title>Files</title>
+<refsect2>
+<title>Output</title>
+<para>
+The huffpuff output consists of two basic parts: The Huffman decoder
+table definition, and the encoded string data definition. Both parts
+consist of 6502 assembly compatible with the XORcyst assembler. Add
+huffpuff's output to your project, then use the 6502 Huffman decoder
+(part of the NeoToxin sources; huffman.asm) to decode strings.
+</para>
+</refsect2>
+
+<refsect2>
+<title>Character Map</title>
+<para>
+The character map file (specified with the --character-map option) 
+is a plaintext file that contains rules for mapping ASCII characters
+to other values; i.e. to define a custom character set.
+<command>huffpuff</command> applies this transformation before the
+Huffman compression is performed.
+</para>
+
+<para>
+There are two types of character mapping rules:
+</para>
+
+<variablelist>
+
+<varlistentry>
+<term><parameter>character</parameter>=<parameter>value</parameter></term>
+<listitem>
+<para>
+Specifies that the given <parameter>character</parameter> should be mapped to the given <parameter>value</parameter>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><parameter>low-character</parameter>-<parameter>high-character</parameter>=<parameter>base-value</parameter></term>
+<listitem>
+<para>
+Specifies a mapping for a range of characters. The characters are those from <parameter>low-character</parameter> to <parameter>high-character</parameter>, inclusive. <parameter>low-character</parameter> will be mapped to <parameter>base-value</parameter>, <parameter>low-character</parameter>+1 will be mapped to <parameter>base-value</parameter>+1, and so on. This type of rule is typically used to "relocate" (groups of) alpha(numeric) characters (e.g. A-Z=0xC0).
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<para>
+Lines that begin with the # character are ignored, i.e. they can be
+used as comments (use \# to specify a rule for mapping # itself).
+</para>
+</refsect2>
+
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+<para>
+To encode <literal>strings.txt</literal> as-is (no character mapping):
+</para>
+<para>
+<userinput>
+huffpuff strings.txt
+</userinput>
+</para>
+<para>
+To encode <literal>strings.txt</literal> after first transposing the input according to the character map <literal>example.tbl</literal>:
+</para>
+<para>
+<userinput>
+huffpuff --character-map=example.tbl strings.txt
+</userinput>
+</para>
+<para>
+To encode <literal>strings.txt</literal> and store the output in given files:
+</para>
+<para>
+<userinput>
+huffpuff --table-output=myhufftab.asm --data-output=myhuffdata.asm strings.txt
+</userinput>
+</para>
+<para>
+To encode <literal>strings.txt</literal> and cause every string to be 0-terminated:
+</para>
+<para>
+<userinput>
+huffpuff --append-byte=0 strings.txt
+</userinput>
+</para>
+</refsect1>
+
+</refentry>
