@@ -1,0 +1,44 @@
+This is packchr, a tool that finds unique tiles in NES character (CHR)
+files.
+
+packchr is intended to be used to convert logos, title screens, cut
+scene images etc. into a representation suitable for display on the
+NES.
+
+See INSTALL for installation instructions.
+
+See doc/index.html for documentation, or do "man packchr" after
+installation.
+
+packchr does not deal with palette data. You have to ensure that you
+set up the NES palette properly yourself.
+
+The whole process goes something like this:
+
+1. Prepare your artwork as raw CHR in whatever way you like; e.g. by
+using a tile editor, or an image converter, or a hex editor (extra
+points!).
+
+2. Run packchr with your raw CHR as input. This produces a new CHR
+with dupe tiles removed, and a raw nametable.
+
+3. Run packnam with the nametable produced by packchr as
+input. Remember to specify the correct --width parameter, and
+--vram-address (unless you want the image to show up in the top-left
+corner on the NES).
+
+4. Prepare a CHR bank containing the CHR produced by packchr. This is
+the bank that you have to load into NES video memory when you want to
+display the image; i.e. it must be part of your NES ROM. packchr's
+--character-size option can be useful; use it to produce a file that's
+exactly 1K/2K/4K, then this step is a no-op. If your bank is 1K or 2K,
+make sure that you transpose the nametable tile indexes if necessary,
+by specifying a --nametable-base when invoking packchr; for example,
+if your bank is 1K and will reside at address 0x0C00 in NES video
+memory, you should use --nametable-base=0xC0; otherwise the tile
+indexes and the location of the CHR won't match, and the NES will
+display junk.
+
+5. Include the packed nametable produced by packnam in your NES
+ROM. Write 6502 code that loads it (see the packnam README for
+details). Compile the ROM and hope it works.

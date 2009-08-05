@@ -1,0 +1,127 @@
+.\"     Title: packchr
+.\"    Author: Kent Hansen
+.\" Generator: DocBook XSL Stylesheets v1.71.1 <http://docbook.sf.net/>
+.\"      Date: 03/31/2008
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "PACKCHR" "1" "03/31/2008" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+packchr \- finds unique tiles in a NES character (CHR) file
+.SH "SYNOPSIS"
+.HP 8
+\fBpackchr\fR [\fBoption\fR...] {file}
+.SH "DESCRIPTION"
+.PP
+
+\fBpackchr\fR
+reads a raw NES character (CHR) file and finds the tiles (i.e. 16\-byte blocks) that are unique. It also generates a nametable file (a file containing indexes of the tiles), so that the original graphic can be reconstructed.
+.PP
+As a basic illustration of what packchr does, assume that the input is a character file containing the following tiles (each letter represents an 8x8\-pixel tile):
+.PP
+AAABBCDEBBBBBDDAAAABABA
+.PP
+packchr will create a character file with duplicates stripped:
+.PP
+ABCDE
+.PP
+and a nametable file indexing the unique tiles (0=A, 1=B, and so on):
+.PP
+0 0 0 1 1 2 3 4 1 1 1 1 1 3 3 0 0 0 0 1 0 1 0
+.SH "OPTIONS"
+.PP
+\fB\-\-nametable\-base\fR=\fInum\fR
+.RS 4
+Use
+\fInum\fR
+as nametable base tile index; i.e. the first tile will be referenced as
+\fInum\fR
+in the nametable, the second as
+\fInum\fR+1, etc.; by default the nametable base is 0.
+.RE
+.PP
+\fB\-\-null\-tile\fR=\fInum\fR
+.RS 4
+Use
+\fInum\fR
+as implicit null tile index; that is, don't produce any character data for a 'blank' tile.
+.RE
+.PP
+\fB\-\-character\-output\fR=\fIfile\fR
+.RS 4
+Store character data with duplicate tiles removed in
+\fIfile\fR. If this option is not specified, the data will be written to
+packchr.chr.
+.RE
+.PP
+\fB\-\-character\-size\fR=\fIsize\fR
+.RS 4
+Pad the resulting character data to
+\fIsize\fR
+bytes if necessary.
+.RE
+.PP
+\fB\-\-nametable\-output\fR=\fIfile\fR
+.RS 4
+Store nametable in
+\fIfile\fR. If this option is not specified, the data will be written to
+packchr.nam.
+.RE
+.PP
+\fB\-\-verbose\fR
+.RS 4
+Print progress information to standard output.
+.RE
+.PP
+\fB\-\-help\fR
+.RS 4
+Give a help list.
+.RE
+.PP
+\fB\-\-usage\fR
+.RS 4
+Give a short usage message.
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Print program version.
+.RE
+.SH "FILES"
+.SS "Output"
+.PP
+The packchr output consists of two parts: One is the character data, stripped of duplicate tiles. The other part is the nametable data, which is a series of bytes containing tile indexes. Together, these two pieces of data can be used to reconstruct the original graphic (the input to packchr).
+.SH "EXAMPLES"
+.PP
+To pack
+myimage.chr:
+.PP
+
+\fB packchr myimage.chr \fR
+.PP
+To pack
+myimage.chr
+and store the output in given files:
+.PP
+
+\fB packchr \-\-character\-output=nodupes.chr \-\-nametable\-output=mynametab.nam myimage.chr \fR
+.PP
+To pack
+myimage.chr
+and transpose the tile indexes in the nametable by 0x80:
+.PP
+
+\fB packchr \-\-nametable\-base=0x80 myimage.chr \fR
+.SH "SEE ALSO"
+.PP
+packnam(1)
+.SH "AUTHOR"
+.PP
+\fBKent Hansen\fR
+.sp -1n
+.IP "" 4
+Author.

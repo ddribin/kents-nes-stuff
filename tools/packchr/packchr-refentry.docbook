@@ -1,0 +1,224 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "/sw/share/xml/dtd/docbookx/4.5.0/docbookx.dtd">
+
+<refentry id="packchr">
+
+<refentryinfo>
+<author>
+<firstname>Kent</firstname>
+<surname>Hansen</surname>
+</author>
+</refentryinfo>
+
+<refmeta>
+<refentrytitle>packchr</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>packchr</refname>
+<refpurpose>finds unique tiles in a NES character (CHR) file</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<cmdsynopsis>
+<command>packchr</command>
+<arg choice="opt" rep="repeat">
+  <option>option</option>
+</arg>
+<arg choice="req">file</arg>
+</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+<para>
+<command>packchr</command> reads a raw NES character (CHR) file and
+finds the tiles (i.e. 16-byte blocks) that are unique. It also
+generates a nametable file (a file containing indexes of the tiles),
+so that the original graphic can be reconstructed.
+</para>
+<para>
+As a basic illustration of what packchr does, assume that the input is
+a character file containing the following tiles (each letter
+represents an 8x8-pixel tile):
+</para>
+<para>
+AAABBCDEBBBBBDDAAAABABA
+</para>
+<para>
+packchr will create a character file with duplicates stripped:
+</para>
+<para>
+ABCDE
+</para>
+<para>
+and a nametable file indexing the unique tiles (0=A, 1=B, and so on):
+</para>
+<para>
+0 0 0 1 1 2 3 4 1 1 1 1 1 3 3 0 0 0 0 1 0 1 0
+</para>
+</refsect1>
+
+<refsect1><title>Options</title>
+<variablelist>
+
+<varlistentry>
+<term>
+<option>--nametable-base</option>=<parameter>num</parameter>
+</term>
+<listitem>
+<para>
+Use <parameter>num</parameter> as nametable base tile index; i.e. the
+first tile will be referenced as <parameter>num</parameter> in the
+nametable, the second as <parameter>num</parameter>+1, etc.; by
+default the nametable base is 0.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--null-tile</option>=<parameter>num</parameter>
+</term>
+<listitem>
+<para>
+Use <parameter>num</parameter> as implicit null tile index; that is,
+don't produce any character data for a 'blank' tile.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--character-output</option>=<parameter>file</parameter>
+</term>
+<listitem>
+<para>
+Store character data with duplicate tiles removed
+in <parameter>file</parameter>.  If this option is not specified, the
+data will be written to <literal>packchr.chr</literal>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--character-size</option>=<parameter>size</parameter>
+</term>
+<listitem>
+<para>
+Pad the resulting character data to <parameter>size</parameter> bytes if
+necessary.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--nametable-output</option>=<parameter>file</parameter>
+</term>
+<listitem>
+<para>
+Store nametable in <parameter>file</parameter>. If this option is not specified,
+the data will be written to <literal>packchr.nam</literal>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--verbose</option>
+</term>
+<listitem>
+<para>
+Print progress information to standard output.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--help</option>
+</term>
+<listitem>
+<para>
+Give a help list.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--usage</option>
+</term>
+<listitem>
+<para>
+Give a short usage message.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--version</option>
+</term>
+<listitem>
+<para>
+Print program version.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</refsect1>
+
+<refsect1>
+<title>Files</title>
+<refsect2>
+<title>Output</title>
+<para>
+The packchr output consists of two parts: One is the character data,
+stripped of duplicate tiles. The other part is the nametable data,
+which is a series of bytes containing tile indexes. Together, these
+two pieces of data can be used to reconstruct the original graphic
+(the input to packchr).
+</para>
+</refsect2>
+</refsect1>
+
+<refsect1>
+<title>Examples</title>
+<para>
+To pack <literal>myimage.chr</literal>:
+</para>
+<para>
+<userinput>
+packchr myimage.chr
+</userinput>
+</para>
+<para>
+To pack <literal>myimage.chr</literal> and store the output in given files:
+</para>
+<para>
+<userinput>
+packchr --character-output=nodupes.chr --nametable-output=mynametab.nam myimage.chr
+</userinput>
+</para>
+<para>
+To pack <literal>myimage.chr</literal> and transpose the tile indexes in the nametable by 0x80:
+</para>
+<para>
+<userinput>
+packchr --nametable-base=0x80 myimage.chr
+</userinput>
+</para>
+</refsect1>
+
+<refsect1>
+<title>See Also</title>
+<para>
+packnam(1)
+</para>
+</refsect1>
+
+</refentry>
