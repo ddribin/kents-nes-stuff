@@ -321,7 +321,7 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
                                 break;
 			    case 0xF:
 				data[pos++] = SET_SPEED_COMMAND;
-				data[pos++] = n->effect_param;
+				data[pos++] = n->effect_param + 1;
 				break;
 			    default:
 				fprintf(stderr, "ignoring effect %x%.2x in channel %d, row %d\n",
