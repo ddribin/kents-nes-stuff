@@ -233,17 +233,20 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
             const struct xm_pattern_slot *n = &slots[(row+i)*channel_count];
 	    if (n->note != 0) {
 		flags |= 1 << i;
-	    } else if ((n->instrument != 0) && (n->instrument != lastinstr)) {
+	    }
+            if ((n->instrument != 0) && (n->instrument != lastinstr)) {
 		lastinstr = n->instrument;
 		flags |= 1 << i;
-	    } else if (n->volume != 0) {
+	    }
+            if (n->volume != 0) {
 		if ((n->volume >= 0x10) && (n->volume < 0x50)) {
 		    if ((channel == 2) || (channel == 4))
 			fprintf(stderr, "volume channel bytes are ignored for channel 2 and 4\n");
 		    else
 			flags |= 1 << i;
 		}
-	    } else if ((n->effect_type != lastefftype)
+	    }
+            if ((n->effect_type != lastefftype)
 		       || ((n->effect_param != lasteffparam)
 			   && (n->effect_param != 0))) {
 		if (n->effect_param != 0)
