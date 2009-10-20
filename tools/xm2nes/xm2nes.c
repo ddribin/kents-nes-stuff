@@ -347,17 +347,32 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
 		    break;
 		    /* dpcm */
 		case 4:
-                    /* ### don't hardcode the sample mapping */
-                    if (1) {
-                        data[pos++] = n->instrument - 0x39;
-                    } else {
-                        if (n->instrument == 0x39)
-                            data[pos++] = 42; /* bassdrum */
-                        else if (n->instrument == 0x3A)
-                            data[pos++] = 43; /* combined bassdrum+snare */
-                        else if (n->instrument == 0x3B)
-                            data[pos++] = n->note - 42; /* bass note */
+                    if (n->effect_type != 0) {
+                        switch (n->effect_type) {
+                            case 0xF:
+				data[pos++] = SET_SPEED_COMMAND;
+				data[pos++] = n->effect_param + 1;
+                                break;
+                            default:
+				fprintf(stderr, "ignoring effect %x%.2x in channel %d, row %d\n",
+					n->effect_type, n->effect_param, channel, row+i);
+                                ;
+                        }               
                     }
+                    /* ### don't hardcode the sample mapping */
+                    if (n->note != 0) {
+                        if (1) {
+                            data[pos++] = n->instrument - 0x39;
+                        } else {
+                            if (n->instrument == 0x39)
+                                data[pos++] = 42; /* bassdrum */
+                            else if (n->instrument == 0x3A)
+                                data[pos++] = 43; /* combined bassdrum+snare */
+                            else if (n->instrument == 0x3B)
+                                data[pos++] = n->note - 42; /* bass note */
+                        }
+                    } else
+                        data[pos++] = END_ROW_COMMAND;
                     break;
 	    }
 	}
