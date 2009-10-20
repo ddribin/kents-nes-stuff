@@ -350,12 +350,22 @@ tracks      .track_state[5]
     rts
 .endp
 
+; Sets speed of all tracks.
+; Only works if the speed command is used on channel 4 (DMC)!
+; A = new speed
 .proc set_all_tracks_speed
     sta tracks[0].speed
     sta tracks[1].speed
     sta tracks[2].speed
     sta tracks[3].speed
     sta tracks[4].speed
+    ;
+    sec
+    sbc #1
+    sta tracks[0].tick
+    sta tracks[1].tick
+    sta tracks[2].tick
+    sta tracks[3].tick
     rts
 .endp
 

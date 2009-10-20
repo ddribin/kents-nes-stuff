@@ -27,12 +27,37 @@
 .public play_dmc_sample
 .public process_dmc_pattern_byte
 
+.extrn fetch_pattern_byte:proc
+.extrn set_all_tracks_speed:proc
 .extrn dmc_sample_table:byte
+
+.proc process_dmc_pattern_byte
+    ora     #0
+    bmi     @@is_command
+    jsr     play_dmc_sample
+    clc
+    rts
+    @@is_command:
+    ; only supported commands are "set speed" and "end row"
+    cmp     #$F3
+    beq     @@set_speed
+    cmp     #$F4
+    beq     @@end_row
+    ; uh-oh, don't know how to handle this command
+    clc
+    rts
+    @@set_speed:
+    jsr     fetch_pattern_byte
+    jsr     set_all_tracks_speed
+    sec
+    rts
+    @@end_row:
+    clc
+    rts
+.endp
 
 ; Plays a DMC sample.
 ; Params:   A = sample #
-
-.label process_dmc_pattern_byte
 .proc play_dmc_sample
     asl
     asl
