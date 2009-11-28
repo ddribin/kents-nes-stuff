@@ -60,6 +60,7 @@ pattern_table   .ptr
 instrument_table .ptr
 
 .public instrument_table
+.public tracks
 
 .dataseg
 

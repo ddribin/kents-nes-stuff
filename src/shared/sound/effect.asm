@@ -27,6 +27,7 @@
 ; - Arpeggio
 
 .include "mixer.h"
+.include "track.h"
 .include <common/tablecall.h>
 
 .dataseg
@@ -43,6 +44,7 @@ value   .byte
 .extrn period_table_lo:byte
 .extrn period_table_hi:byte
 .extrn mixer:mixer_state
+.extrn tracks:track_state
 .extrn table_call:proc
 
 ; Do one tick of effect.
@@ -60,6 +62,7 @@ TC_SLOT arpeggio_tick
 TC_SLOT volume_slide_tick
 TC_SLOT tremolo_tick
 TC_SLOT cut_tick
+TC_SLOT pulsemod_tick
 .endp
 
 ; Command 0 is no effect.
@@ -382,6 +385,23 @@ vibrato_table:
     sta     mixer.tonals.period.lo,x
     sta     mixer.tonals.period.hi,x
     rts
+.endp
+
+; ------ Pulse width (duty cycle) modulation
+; NB: can only be used on channels 0 and 1
+; Reusing the vibrato struct because I'm lazy...
+.proc pulsemod_tick
+    lda    tracks.tick,x
+    bne    +
+    lda    #1
+    sta    mixer.tonals.square.counter,x
+    lda    mixer.tonals.effect.vibrato.param,x ; new duty cycle in lower 2 bits
+    asl
+    asl
+    asl
+    asl
+    sta    mixer.tonals.square.duty_ctrl,x
+  + rts
 .endp
 
 .end
