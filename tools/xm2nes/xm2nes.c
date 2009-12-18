@@ -312,6 +312,10 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
 				break;
                             case 0xE:
                                 switch ((n->effect_param & 0xF0) >> 4) {
+                                    case 0x8: /* pulse modulation */
+                                        data[pos++] = SET_EFFECT_COMMAND_BASE | 9;
+                                        data[pos++] = n->effect_param & 0x0F;
+                                        break;
                                     case 0xC: /* note cut */
                                         data[pos++] = SET_EFFECT_COMMAND_BASE | 8;
                                         data[pos++] = n->effect_param & 0x0F;
