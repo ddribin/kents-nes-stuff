@@ -1,39 +1,14 @@
 SOUND_OBJS = \
-    periodtable.o \
-    volumetable.o \
-    envelope.o \
-    effect.o \
-    tonal.o \
-    dmc.o \
-    mixer.o \
-    sequencer.o \
-    sound.o
+    $(BUILD_DIR)/periodtable.o \
+    $(BUILD_DIR)/volumetable.o \
+    $(BUILD_DIR)/envelope.o \
+    $(BUILD_DIR)/effect.o \
+    $(BUILD_DIR)/tonal.o \
+    $(BUILD_DIR)/dmc.o \
+    $(BUILD_DIR)/mixer.o \
+    $(BUILD_DIR)/sequencer.o \
+    $(BUILD_DIR)/sound.o
 
-SOUNDSRCDIR = $(BASESRCDIR)/sound
-
-periodtable.o: $(SOUNDSRCDIR)/periodtable.asm
-	$(XASM) $< -o $@
-
-volumetable.o: $(SOUNDSRCDIR)/volumetable.asm
-	$(XASM) $< -o $@
-
-envelope.o: $(SOUNDSRCDIR)/envelope.asm
-	$(XASM) $< -o $@
-
-effect.o: $(SOUNDSRCDIR)/effect.asm
-	$(XASM) $< -o $@
-
-tonal.o: $(SOUNDSRCDIR)/tonal.asm
-	$(XASM) $< -o $@
-
-dmc.o: $(SOUNDSRCDIR)/dmc.asm
-	$(XASM) $< -o $@
-
-sequencer.o: $(SOUNDSRCDIR)/sequencer.asm
-	$(XASM) $< -o $@
-
-mixer.o: $(SOUNDSRCDIR)/mixer.asm
-	$(XASM) $< -o $@
-
-sound.o: $(SOUNDSRCDIR)/sound.asm
+$(BUILD_DIR)/%.o: $(BASESRCDIR)/sound/%.asm
+	@$(CHK_DIR_EXISTS) $(BUILD_DIR) || $(MKDIR) $(BUILD_DIR)
 	$(XASM) $< -o $@

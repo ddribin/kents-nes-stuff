@@ -1,51 +1,17 @@
 COMMON_OBJS = \
-    bitmasktable.o \
-    sprite.o \
-    tablecall.o \
-    joypad.o \
-    ppu.o \
-    ppuwrite.o \
-    ppubuffer.o \
-    timer.o \
-    irq.o \
-    nmi.o \
-    reset.o \
-    vectors.o
+    $(BUILD_DIR)/bitmasktable.o \
+    $(BUILD_DIR)/sprite.o \
+    $(BUILD_DIR)/tablecall.o \
+    $(BUILD_DIR)/joypad.o \
+    $(BUILD_DIR)/ppu.o \
+    $(BUILD_DIR)/ppuwrite.o \
+    $(BUILD_DIR)/ppubuffer.o \
+    $(BUILD_DIR)/timer.o \
+    $(BUILD_DIR)/irq.o \
+    $(BUILD_DIR)/nmi.o \
+    $(BUILD_DIR)/reset.o \
+    $(BUILD_DIR)/vectors.o
 
-COMMONSRCDIR = $(BASESRCDIR)/common
-
-timer.o: $(COMMONSRCDIR)/timer.asm
-	$(XASM) $< -o $@
-
-bitmasktable.o: $(COMMONSRCDIR)/bitmasktable.asm
-	$(XASM) $< -o $@
-
-sprite.o: $(COMMONSRCDIR)/sprite.asm
-	$(XASM) $< -o $@
-
-tablecall.o: $(COMMONSRCDIR)/tablecall.asm
-	$(XASM) $< -o $@
-
-joypad.o: $(COMMONSRCDIR)/joypad.asm
-	$(XASM) $< -o $@
-
-ppu.o: $(COMMONSRCDIR)/ppu.asm
-	$(XASM) $< -o $@
-
-ppuwrite.o: $(COMMONSRCDIR)/ppuwrite.asm
-	$(XASM) $< -o $@
-
-ppubuffer.o: $(COMMONSRCDIR)/ppubuffer.asm
-	$(XASM) $< -o $@
-
-irq.o: $(COMMONSRCDIR)/irq.asm
-	$(XASM) $< -o $@
-
-nmi.o: $(COMMONSRCDIR)/nmi.asm maincycletable.asm
-	$(XASM) $< -o $@
-
-reset.o: $(COMMONSRCDIR)/reset.asm
-	$(XASM) $< -o $@
-
-vectors.o: $(COMMONSRCDIR)/vectors.asm
+$(BUILD_DIR)/%.o: $(BASESRCDIR)/common/%.asm
+	@$(CHK_DIR_EXISTS) $(BUILD_DIR) || $(MKDIR) $(BUILD_DIR)
 	$(XASM) $< -o $@
