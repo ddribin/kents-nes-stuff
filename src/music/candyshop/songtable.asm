@@ -19,10 +19,10 @@
 
 .public song_table
 
-.extrn CANDY_song:label
+.extrn candy_song:label
 
 song_table:
 .dw 0
-.dw CANDY_song
+.dw candy_song
 
 .end

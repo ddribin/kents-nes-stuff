@@ -17,9 +17,9 @@
 
 .codeseg
 
-.public CANDY_song
+.public candy_song
 
-CANDY_instrument_table:
+candy_instrument_table:
 .dw env0 : .db $00,$00,$00,$92 : .db $00,$00 ; 0
 .dw env2 : .db $00,$00,$00,$23 : .db $00,$00 ; 1
 .dw env0 : .db $00,$00,$00,$42 : .db $00,$00 ; 2
