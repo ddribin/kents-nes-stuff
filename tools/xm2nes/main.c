@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
     const char *input_filename = 0;
     const char *output_filename = 0;
     const char *instruments_map_filename = 0;
-    int channels = 0x1F;
+    struct xm2nes_options options;
     struct instr_mapping instr_map[128];
     {
         unsigned char i;
@@ -187,6 +187,9 @@ int main(int argc, char *argv[])
             instr_map[i].transpose = 0;
         }
     }
+    options.instr_map = instr_map;
+    options.channels = 0x1F;
+    options.label_prefix = 0;
     /* Process arguments. */
     {
         char *p;
@@ -197,17 +200,17 @@ int main(int argc, char *argv[])
                     output_filename = &opt[7];
                 } else if (!strncmp("channels=", opt, 9)) {
                     const char *p = &opt[9];
-                    channels = 0;
+                    options.channels = 0;
                     if (*p) {
-                        channels |= 1 << (*p - '0');
+                        options.channels |= 1 << (*p - '0');
                         while (*(++p)) {
                             if (*(p++) != ',')
                                 break;
                             if (*p)
-                                channels |= 1 << (*p - '0');
+                                options.channels |= 1 << (*p - '0');
 			}
 		    }
-                    channels &= 0x1F;
+                    options.channels &= 0x1F;
                 } else if (!strncmp("instruments-map=", opt, 16)) {
                     instruments_map_filename = &opt[16];
                 } else if (!strcmp("verbose", opt)) {
@@ -235,7 +238,7 @@ int main(int argc, char *argv[])
         return(-1);
     }
 
-    if (!channels) {
+    if (!options.channels) {
         fprintf(stderr, "xm2nes: --channels argument needs to include at least one channel\n");
         return(-1);
     }
@@ -290,8 +293,9 @@ int main(int argc, char *argv[])
             prefix[len] = '_';
             prefix[len+1] = '\0';
             strncpy(prefix, input_filename, len);
+            options.label_prefix = prefix;
 
-            convert_xm_to_nes(&xm, channels, instr_map, prefix, out);
+            convert_xm_to_nes(&xm, &options, out);
 
             free(prefix);
         }

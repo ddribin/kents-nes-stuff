@@ -385,9 +385,9 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
   Converts the given \a xm to NES format; writes the 6502 assembly
   language representation of the song to \a out.
 */
-void convert_xm_to_nes(const struct xm *xm, int channels,
-                       const struct instr_mapping *instr_map,
-                       const char *label_prefix, FILE *out)
+void convert_xm_to_nes(const struct xm *xm,
+                       const struct xm2nes_options *options,
+                       FILE *out)
 {
     int chn;
     int unused_channels;
@@ -405,7 +405,7 @@ void convert_xm_to_nes(const struct xm *xm, int channels,
     /* Step 1. Find, convert and print unique patterns. */
     for (chn = 0; chn < xm->header.channel_count; ++chn) {
 	int i;
-        if (!((1 << chn) & channels)) {
+        if (!((1 << chn) & options->channels)) {
             unused_channels |= 1 << chn;
             continue;
         }
@@ -447,8 +447,8 @@ void convert_xm_to_nes(const struct xm *xm, int channels,
 	    char label[256];
             int pi = unique_pattern_indexes[chn][i];
 	    convert_xm_pattern_to_nes(&xm->patterns[pi], xm->header.channel_count,
-                                      chn, instr_map, &data, &data_size);
-	    sprintf(label, "%schn%d_ptn%d", label_prefix, chn, i);
+                                      chn, options->instr_map, &data, &data_size);
+	    sprintf(label, "%schn%d_ptn%d", options->label_prefix, chn, i);
 	    print_chunk(out, label, data, data_size, 16);
 	    free(data);
 	}
@@ -469,17 +469,17 @@ void convert_xm_to_nes(const struct xm *xm, int channels,
     }
 
     /* Step 3. Print the pattern pointer table. */
-    fprintf(out, "%spattern_table:\n", label_prefix);
+    fprintf(out, "%spattern_table:\n", options->label_prefix);
     for (chn = 0; chn < xm->header.channel_count; ++chn) {
 	int i;
         if (unused_channels & (1 << chn))
             continue;
 	for (i = 0; i < unique_pattern_count[chn]; ++i)
-	    fprintf(out, ".dw %schn%d_ptn%d\n", label_prefix, chn, i);
+	    fprintf(out, ".dw %schn%d_ptn%d\n", options->label_prefix, chn, i);
     }
 
     /* Step 4. Print song header + order tables. */
-    fprintf(out, "%ssong:\n", label_prefix);
+    fprintf(out, "%ssong:\n", options->label_prefix);
     {
 	int order_offset = 0;
 	for (chn = 0; chn < xm->header.channel_count; ++chn) {
@@ -492,8 +492,8 @@ void convert_xm_to_nes(const struct xm *xm, int channels,
 		order_offset += order_data_size[chn] + 2;
 	    }
 	}
-	fprintf(out, ".dw %sinstrument_table\n", label_prefix);
-	fprintf(out, ".dw %spattern_table\n", label_prefix);
+	fprintf(out, ".dw %sinstrument_table\n", options->label_prefix);
+	fprintf(out, ".dw %spattern_table\n", options->label_prefix);
         order_offset = 0;
 	for (chn = 0; chn < xm->header.channel_count; ++chn) {
 	    if (chn >= 5)

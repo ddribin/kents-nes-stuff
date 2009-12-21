@@ -21,8 +21,14 @@
 #include "xm.h"
 #include "instrmap.h"
 
-void convert_xm_to_nes(const struct xm *, int,
-                       const struct instr_mapping *,
-                       const char *, FILE *);
+struct xm2nes_options {
+    int channels;
+    const struct instr_mapping *instr_map;
+    const char *label_prefix;
+};
+
+void convert_xm_to_nes(const struct xm *,
+                       const struct xm2nes_options *,
+                       FILE *);
 
 #endif
