@@ -31,6 +31,7 @@ static void usage()
     printf(
         "Usage: xm2nes [--output=FILE] [--channels=CHANNELS]\n"
         "              [--order-start=OFFSET] [--order-end=OFFSET]\n"
+        "              [--label-prefix=PREFIX]\n"
         "              [--instruments-map=FILE] [--verbose]\n"
         "              [--help] [--usage] [--version]\n"
         "              FILE\n");
@@ -48,6 +49,7 @@ static void help()
            "  --order-start=OFFSET            Start offset in pattern order table (0)\n"
            "  --order-end=OFFSET              End offset in pattern order table (song_length-1)\n"
            "  --instruments-map=FILE          Read instrument mapping information from FILE\n"
+           "  --label-prefix=PREFIX           Use PREFIX as the prefix of 6502 assembly labels\n"
            "  --verbose                       Print progress information to standard output\n"  
            "  --help                          Give this help list\n"
            "  --usage                         Give a short usage message\n"
@@ -181,6 +183,7 @@ int main(int argc, char *argv[])
     const char *input_filename = 0;
     const char *output_filename = 0;
     const char *instruments_map_filename = 0;
+    const char *label_prefix = 0;
     struct xm2nes_options options;
     struct instr_mapping instr_map[128];
     {
@@ -218,6 +221,8 @@ int main(int argc, char *argv[])
                     options.channels &= 0x1F;
                 } else if (!strncmp("instruments-map=", opt, 16)) {
                     instruments_map_filename = &opt[16];
+                } else if (!strncmp("label-prefix=", opt, 13)) {
+                    label_prefix = &opt[13];
                 } else if (!strncmp("order-end=", opt, 10)) {
                     options.order_end_offset = strtol(&opt[10], 0, 0);
                 } else if (!strncmp("order-start=", opt, 12)) {
@@ -291,17 +296,30 @@ int main(int argc, char *argv[])
             fprintf(stdout, "Converting...\n");
 
         {
+            const char *begin;
             char *prefix;
             int len;
-            char *last_dot = strrchr(input_filename, '.');
-            if (!last_dot)
-                len = strlen(input_filename);
-            else
-                len = last_dot - input_filename;
+            if (label_prefix) {
+                begin = label_prefix;
+                len = strlen(begin);
+            } else {
+                /* Use basename of input filename as prefix */
+                char *last_dot;
+                begin = strrchr(input_filename, '/');
+                if (begin)
+                    ++begin;
+                else
+                    begin = input_filename;
+                last_dot = strrchr(begin, '.');
+                if (!last_dot)
+                    len = strlen(begin);
+                else
+                    len = last_dot - begin;
+            }
             prefix = (char *)malloc(len + 2);
             prefix[len] = '_';
             prefix[len+1] = '\0';
-            strncpy(prefix, input_filename, len);
+            strncpy(prefix, begin, len);
             options.label_prefix = prefix;
 
             convert_xm_to_nes(&xm, &options, out);
