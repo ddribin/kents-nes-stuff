@@ -55,6 +55,24 @@ static void print_chunk(FILE *out, const char *label,
 }
 
 /**
+  Finds the patterns that are actually used, according to the
+  pattern order table.
+ */
+static void find_used_patterns(int song_length, const unsigned char *order_table,
+                               int **used_set)
+{
+    int i;
+    int bits_in_int = sizeof(int) * 8;
+    int set_size_in_bytes = ((song_length + bits_in_int-1) / bits_in_int) * sizeof(int);
+    *used_set = (int *)malloc(set_size_in_bytes);
+    memset(*used_set, 0, set_size_in_bytes);
+    for (i = 0; i < song_length; ++i) {
+        int j = order_table[i];
+        (*used_set)[j / bits_in_int] |= 1 << (j & (bits_in_int-1));
+    }
+}
+
+/**
   Checks if the given \a pattern is empty.
 */
 static int is_pattern_empty_for_channel(const struct xm_pattern *pattern,
@@ -108,14 +126,19 @@ static int are_patterns_equal_for_channel(
 */
 static void find_unique_patterns_for_channel(
     const struct xm *xm, int channel,
+    int *used_patterns_set,
     unsigned char *unique_pattern_indexes,
     int *unique_pattern_count)
 {
     int i;
+    int bits_in_int = sizeof(int) * 8;
     *unique_pattern_count = 0;
     for (i = 0; i < xm->header.pattern_count; ++i) {
-        const struct xm_pattern *pattern = &xm->patterns[i];
+        const struct xm_pattern *pattern;
         int j;
+        if (!(used_patterns_set[i / bits_in_int] & (1 << (i & (bits_in_int-1)))))
+            continue; /* Whole pattern is unused */
+        pattern = &xm->patterns[i];
         for (j = 0; j < *unique_pattern_count; ++j) {
             int k = unique_pattern_indexes[j];
             const struct xm_pattern *other = &xm->patterns[k];
@@ -439,6 +462,7 @@ void convert_xm_to_nes(const struct xm *xm,
 {
     int chn;
     int unused_channels;
+    int *used_patterns_set;
     unsigned char **unique_pattern_indexes;
     int *unique_pattern_count;
     unsigned char *order_data;
@@ -450,7 +474,11 @@ void convert_xm_to_nes(const struct xm *xm,
     unique_pattern_count = (int *)malloc(xm->header.channel_count * sizeof(int));
     order_data = (unsigned char *)malloc(xm->header.channel_count * xm->header.song_length * sizeof(unsigned char));
     order_data_size = (int *)malloc(xm->header.channel_count * sizeof(int));
-    /* Step 1. Find, convert and print unique patterns. */
+
+    /* Step 1. Find the patterns that are actually used. */
+    find_used_patterns(xm->header.song_length, xm->header.pattern_order_table, &used_patterns_set);
+
+    /* Step 2. Find, convert and print unique patterns. */
     for (chn = 0; chn < xm->header.channel_count; ++chn) {
 	int i;
         if (!((1 << chn) & options->channels)) {
@@ -459,7 +487,8 @@ void convert_xm_to_nes(const struct xm *xm,
         }
 
 	unique_pattern_indexes[chn] = (unsigned char *)malloc(xm->header.pattern_count * sizeof(unsigned char));
-	find_unique_patterns_for_channel(xm, chn, unique_pattern_indexes[chn], &unique_pattern_count[chn]);
+	find_unique_patterns_for_channel(xm, chn, used_patterns_set,
+                                         unique_pattern_indexes[chn], &unique_pattern_count[chn]);
 
         {
             int j;
@@ -502,7 +531,7 @@ void convert_xm_to_nes(const struct xm *xm,
 	}
     }
 
-    /* Step 2. Create order tables. */
+    /* Step 3. Create order tables. */
     {
 	int pattern_offset = 0;
         for (chn = 0; chn < xm->header.channel_count; ++chn) {
@@ -516,11 +545,11 @@ void convert_xm_to_nes(const struct xm *xm,
         }
     }
 
-    /* Step 3. Print the pattern pointer table. */
+    /* Step 4. Print the pattern pointer table. */
     print_pattern_table(xm->header.channel_count, unused_channels,
                         unique_pattern_count, options->label_prefix, out);
 
-    /* Step 4. Print song header + order tables. */
+    /* Step 5. Print song header + order tables. */
     print_song_struct(xm->header.channel_count, unused_channels,
                       xm->header.default_tempo + 1, order_data_size,
                       order_data, xm->header.song_length,
@@ -533,4 +562,5 @@ void convert_xm_to_nes(const struct xm *xm,
     free(unique_pattern_count);
     free(order_data);
     free(order_data_size);
+    free(used_patterns_set);
 }
