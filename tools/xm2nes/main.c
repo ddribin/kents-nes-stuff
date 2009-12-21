@@ -30,6 +30,7 @@ static void usage()
 {
     printf(
         "Usage: xm2nes [--output=FILE] [--channels=CHANNELS]\n"
+        "              [--order-start=OFFSET] [--order-end=OFFSET]\n"
         "              [--instruments-map=FILE] [--verbose]\n"
         "              [--help] [--usage] [--version]\n"
         "              FILE\n");
@@ -44,6 +45,8 @@ static void help()
            "Options:\n\n"
            "  --output=FILE                   Store output in FILE\n"
            "  --channels=CHANNELS             Process only CHANNELS (0,1,2,3,4)\n"
+           "  --order-start=OFFSET            Start offset in pattern order table (0)\n"
+           "  --order-end=OFFSET              End offset in pattern order table (song_length-1)\n"
            "  --instruments-map=FILE          Read instrument mapping information from FILE\n"
            "  --verbose                       Print progress information to standard output\n"  
            "  --help                          Give this help list\n"
@@ -190,6 +193,8 @@ int main(int argc, char *argv[])
     options.instr_map = instr_map;
     options.channels = 0x1F;
     options.label_prefix = 0;
+    options.order_start_offset = 0;
+    options.order_end_offset = -1;
     /* Process arguments. */
     {
         char *p;
@@ -213,6 +218,10 @@ int main(int argc, char *argv[])
                     options.channels &= 0x1F;
                 } else if (!strncmp("instruments-map=", opt, 16)) {
                     instruments_map_filename = &opt[16];
+                } else if (!strncmp("order-end=", opt, 10)) {
+                    options.order_end_offset = strtol(&opt[10], 0, 0);
+                } else if (!strncmp("order-start=", opt, 12)) {
+                    options.order_start_offset = strtol(&opt[12], 0, 0);
                 } else if (!strcmp("verbose", opt)) {
                     verbose = 1;
                 } else if (!strcmp("help", opt)) {

@@ -25,6 +25,8 @@ struct xm2nes_options {
     int channels;
     const struct instr_mapping *instr_map;
     const char *label_prefix;
+    int order_start_offset;
+    int order_end_offset;
 };
 
 void convert_xm_to_nes(const struct xm *,

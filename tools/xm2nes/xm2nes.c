@@ -158,6 +158,7 @@ static void find_unique_patterns_for_channel(
 */
 static void calculate_order_table_for_channel(
     const struct xm *xm, int channel,
+    int order_start_offset, int order_end_offset,
     unsigned char *unique_pattern_indexes,
     int unique_pattern_count, int pattern_offset,
     unsigned char *order_table, int *order_table_size)
@@ -166,7 +167,7 @@ static void calculate_order_table_for_channel(
     int prev = -1;
     int count = 0;
     int pos = 0;
-    for (i = 0; i < xm->header.song_length; ++i) {
+    for (i = order_start_offset; i <= order_end_offset; ++i) {
         int j;
         int k = xm->header.pattern_order_table[i];
         const struct xm_pattern *pattern = &xm->patterns[k];
@@ -467,16 +468,30 @@ void convert_xm_to_nes(const struct xm *xm,
     int *unique_pattern_count;
     unsigned char *order_data;
     int *order_data_size;
+    int song_length;
+    int order_start_offset;
+    int order_end_offset;
     if (xm->header.song_length == 0)
         return;
+
+    order_end_offset = options->order_end_offset;
+    if ((order_end_offset == -1) || (options->order_end_offset >= xm->header.song_length))
+        order_end_offset = xm->header.song_length - 1;
+    order_start_offset = options->order_start_offset;
+    if (order_start_offset < 0)
+        order_start_offset = 0;
+    else if (order_start_offset > order_end_offset)
+        order_start_offset = order_end_offset;
+    song_length = order_end_offset - order_start_offset + 1;
+
     unused_channels = 0;
     unique_pattern_indexes = (unsigned char **)malloc(xm->header.channel_count * sizeof(unsigned char *));
     unique_pattern_count = (int *)malloc(xm->header.channel_count * sizeof(int));
-    order_data = (unsigned char *)malloc(xm->header.channel_count * xm->header.song_length * sizeof(unsigned char));
+    order_data = (unsigned char *)malloc(xm->header.channel_count * song_length * sizeof(unsigned char));
     order_data_size = (int *)malloc(xm->header.channel_count * sizeof(int));
 
     /* Step 1. Find the patterns that are actually used. */
-    find_used_patterns(xm->header.song_length, xm->header.pattern_order_table, &used_patterns_set);
+    find_used_patterns(song_length, xm->header.pattern_order_table + order_start_offset, &used_patterns_set);
 
     /* Step 2. Find, convert and print unique patterns. */
     for (chn = 0; chn < xm->header.channel_count; ++chn) {
@@ -537,9 +552,11 @@ void convert_xm_to_nes(const struct xm *xm,
         for (chn = 0; chn < xm->header.channel_count; ++chn) {
             if (unused_channels & (1 << chn))
                 continue;
-            calculate_order_table_for_channel(xm, chn, unique_pattern_indexes[chn],
+            calculate_order_table_for_channel(xm, chn, order_start_offset,
+                                              order_end_offset,
+                                              unique_pattern_indexes[chn],
                                               unique_pattern_count[chn], pattern_offset,
-                                              &order_data[chn * xm->header.song_length],
+                                              &order_data[chn * song_length],
                                               &order_data_size[chn]);
 	    pattern_offset += unique_pattern_count[chn];
         }
@@ -552,7 +569,7 @@ void convert_xm_to_nes(const struct xm *xm,
     /* Step 5. Print song header + order tables. */
     print_song_struct(xm->header.channel_count, unused_channels,
                       xm->header.default_tempo + 1, order_data_size,
-                      order_data, xm->header.song_length,
+                      order_data, song_length,
                       options->label_prefix, out);
 
     /* Cleanup */
