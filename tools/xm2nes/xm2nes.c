@@ -20,12 +20,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "xm.h"
-#include "instrmap.h"
-
-void convert_xm_to_nes(const struct xm *, int,
-                       const struct instr_mapping *,
-                       const char *, FILE *);
+#include "xm2nes.h"
 
 #define SET_EFFECT_COMMAND_BASE 0xE0
 #define SET_INSTRUMENT_COMMAND 0xF0

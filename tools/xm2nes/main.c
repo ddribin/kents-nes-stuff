@@ -21,12 +21,7 @@
 #include <assert.h>
 #include <ctype.h>
 
-#include "xm.h"
-#include "instrmap.h"
-
-extern void convert_xm_to_nes(const struct xm *, int,
-                              const struct instr_mapping *,
-                              const char *, FILE *);
+#include "xm2nes.h"
 
 static char program_version[] = "xm2nes 1.0";
 
