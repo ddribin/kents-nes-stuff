@@ -311,7 +311,7 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
 			    case 0x2:
 			    case 0x3:
 			    case 0x4:
-			    case 0x5:
+			    case 0x5: /* This is actually arpeggio -- see hack in xm.c */
 			    case 0x6:
 			    case 0x7:
                             case 0xA: {
