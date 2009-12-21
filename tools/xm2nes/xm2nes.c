@@ -381,6 +381,54 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
     *out_size = pos;
 }
 
+static void print_pattern_table(int channel_count, int unused_channels,
+                                int *unique_pattern_count,
+                                const char *label_prefix, FILE *out)
+{
+    int chn;
+    fprintf(out, "%spattern_table:\n", label_prefix);
+    for (chn = 0; chn < channel_count; ++chn) {
+	int i;
+        if (unused_channels & (1 << chn))
+            continue;
+	for (i = 0; i < unique_pattern_count[chn]; ++i)
+	    fprintf(out, ".dw %schn%d_ptn%d\n", label_prefix, chn, i);
+    }
+}
+
+static void print_song_struct(int channel_count, int unused_channels,
+                              int default_tempo, int *order_data_size,
+                              unsigned char *order_data, int song_length,
+                              const char *label_prefix, FILE *out)
+{
+    int chn;
+    int order_offset = 0;
+    fprintf(out, "%ssong:\n", label_prefix);
+    for (chn = 0; chn < channel_count; ++chn) {
+        if (chn >= 5)
+            break;
+        if (unused_channels & (1 << chn)) {
+            fprintf(out, ".db $FF\n");
+        } else {
+            fprintf(out, ".db %d,%d\n", order_offset, default_tempo);
+            order_offset += order_data_size[chn] + 2;
+        }
+    }
+    fprintf(out, ".dw %sinstrument_table\n", label_prefix);
+    fprintf(out, ".dw %spattern_table\n", label_prefix);
+    order_offset = 0;
+    for (chn = 0; chn < channel_count; ++chn) {
+        if (chn >= 5)
+            break;
+        if (unused_channels & (1 << chn))
+            continue;
+        print_chunk(out, 0, &order_data[chn * song_length],
+                    order_data_size[chn], 16);
+        fprintf(out, ".db $FE,%d\n", order_offset); /* loop back to the beginning */
+        order_offset += order_data_size[chn] + 2;
+    }
+}
+
 /**
   Converts the given \a xm to NES format; writes the 6502 assembly
   language representation of the song to \a out.
@@ -469,43 +517,14 @@ void convert_xm_to_nes(const struct xm *xm,
     }
 
     /* Step 3. Print the pattern pointer table. */
-    fprintf(out, "%spattern_table:\n", options->label_prefix);
-    for (chn = 0; chn < xm->header.channel_count; ++chn) {
-	int i;
-        if (unused_channels & (1 << chn))
-            continue;
-	for (i = 0; i < unique_pattern_count[chn]; ++i)
-	    fprintf(out, ".dw %schn%d_ptn%d\n", options->label_prefix, chn, i);
-    }
+    print_pattern_table(xm->header.channel_count, unused_channels,
+                        unique_pattern_count, options->label_prefix, out);
 
     /* Step 4. Print song header + order tables. */
-    fprintf(out, "%ssong:\n", options->label_prefix);
-    {
-	int order_offset = 0;
-	for (chn = 0; chn < xm->header.channel_count; ++chn) {
-	    if (chn >= 5)
-		break;
-	    if (unused_channels & (1 << chn)) {
-		fprintf(out, ".db $FF\n");
-	    } else {
-		fprintf(out, ".db %d,%d\n", order_offset, xm->header.default_tempo + 1);
-		order_offset += order_data_size[chn] + 2;
-	    }
-	}
-	fprintf(out, ".dw %sinstrument_table\n", options->label_prefix);
-	fprintf(out, ".dw %spattern_table\n", options->label_prefix);
-        order_offset = 0;
-	for (chn = 0; chn < xm->header.channel_count; ++chn) {
-	    if (chn >= 5)
-		break;
-	    if (unused_channels & (1 << chn))
-		continue;
-	    print_chunk(out, 0, &order_data[chn * xm->header.song_length],
-                        order_data_size[chn], 16);
-            fprintf(out, ".db $FE,%d\n", order_offset); /* loop back to the beginning */
-            order_offset += order_data_size[chn] + 2;
-	}
-    }
+    print_song_struct(xm->header.channel_count, unused_channels,
+                      xm->header.default_tempo + 1, order_data_size,
+                      order_data, xm->header.song_length,
+                      options->label_prefix, out);
 
     /* Cleanup */
     for (chn = 0; chn < xm->header.channel_count; ++chn)
