@@ -394,7 +394,7 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
                     /* ### don't hardcode the sample mapping */
                     if (n->note != 0) {
                         if (1) {
-                            data[pos++] = n->instrument - 0x39;
+                            data[pos++] = instr_map[n->instrument - 1].target_instr;
                         } else {
                             if (n->instrument == 0x39)
                                 data[pos++] = 42; /* bassdrum */
