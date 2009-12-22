@@ -77,6 +77,39 @@ Reads instrument mapping information from <parameter>file</parameter>.
 
 <varlistentry>
 <term>
+<option>--label-prefix</option>=<parameter>prefix</parameter>
+</term>
+<listitem>
+<para>
+Prefix 6502 assembly labels by <parameter>prefix</parameter>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--order-start</option>=<parameter>offset</parameter>
+</term>
+<listitem>
+<para>
+Start reading pattern order table from <parameter>offset</parameter>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<option>--order-end</option>=<parameter>offset</parameter>
+</term>
+<listitem>
+<para>
+Stop reading pattern order table at <parameter>offset</parameter>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
 <option>--verbose</option>
 </term>
 <listitem>
@@ -164,6 +197,15 @@ To convert only channels 0 and 2 of <literal>mysong.xm</literal>:
 <para>
 <userinput>
 xm2nes --channels=0,2 mysong.xm
+</userinput>
+</para>
+<para>
+To convert only the order table range [3,5] of <literal>mysong.xm</literal>,
+and call the result "middle":
+</para>
+<para>
+<userinput>
+xm2nes --order-start=3 --order-end=5 --label-prefix=middle mysong.xm
 </userinput>
 </para>
 </refsect1>

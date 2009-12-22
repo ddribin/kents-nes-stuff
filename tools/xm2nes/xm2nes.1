@@ -1,11 +1,11 @@
 .\"     Title: xm2nes
 .\"    Author: Kent Hansen
 .\" Generator: DocBook XSL Stylesheets v1.71.1 <http://docbook.sf.net/>
-.\"      Date: 01/11/2009
+.\"      Date: 12/22/2009
 .\"    Manual: 
 .\"    Source: 
 .\"
-.TH "XM2NES" "1" "01/11/2009" "" ""
+.TH "XM2NES" "1" "12/22/2009" "" ""
 .\" disable hyphenation
 .nh
 .\" disable justification (adjust text to left margin only)
@@ -38,6 +38,24 @@ Only process the channels defined by the list of
 .RS 4
 Reads instrument mapping information from
 \fIfile\fR.
+.RE
+.PP
+\fB\-\-label\-prefix\fR=\fIprefix\fR
+.RS 4
+Prefix 6502 assembly labels by
+\fIprefix\fR.
+.RE
+.PP
+\fB\-\-order\-start\fR=\fIoffset\fR
+.RS 4
+Start reading pattern order table from
+\fIoffset\fR.
+.RE
+.PP
+\fB\-\-order\-end\fR=\fIoffset\fR
+.RS 4
+Stop reading pattern order table at
+\fIoffset\fR.
 .RE
 .PP
 \fB\-\-verbose\fR
@@ -83,6 +101,12 @@ mysong.xm:
 .PP
 
 \fB xm2nes \-\-channels=0,2 mysong.xm \fR
+.PP
+To convert only the order table range [3,5] of
+mysong.xm, and call the result "middle":
+.PP
+
+\fB xm2nes \-\-order\-start=3 \-\-order\-end=5 \-\-label\-prefix=middle mysong.xm \fR
 .SH "AUTHOR"
 .PP
 \fBKent Hansen\fR
