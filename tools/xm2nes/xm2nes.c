@@ -261,8 +261,8 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
 	    }
             if (n->volume != 0) {
 		if ((n->volume >= 0x10) && (n->volume < 0x50)) {
-		    if ((channel == 2) || (channel == 4))
-			fprintf(stderr, "volume channel bytes are ignored for channel 2 and 4\n");
+		    if (channel == 4)
+			fprintf(stderr, "volume channel bytes are ignored for channel 4 (DMC)\n");
 		    else
 			flags |= 1 << i;
 		}
