@@ -82,9 +82,9 @@ static int get_ident(char *s, int i)
 static int get_value(char *s, int i)
 {
     int len = 0;
-    if ((s[i+len] == '-') || isdigit(s[i+len])) {
+    if ((s[i+len] == '-') || isalnum(s[i+len])) {
         ++len;
-        while (isdigit(s[i+len]))
+        while (isalnum(s[i+len]))
             ++len;
     }
     return len;
