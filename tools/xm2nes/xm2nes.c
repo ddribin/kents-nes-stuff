@@ -391,18 +391,14 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
                                 ;
                         }               
                     }
-                    /* ### don't hardcode the sample mapping */
                     if (n->note != 0) {
-                        if (1) {
-                            data[pos++] = instr_map[n->instrument - 1].target_instr;
-                        } else {
-                            if (n->instrument == 0x39)
-                                data[pos++] = 42; /* bassdrum */
-                            else if (n->instrument == 0x3A)
-                                data[pos++] = 43; /* combined bassdrum+snare */
-                            else if (n->instrument == 0x3B)
-                                data[pos++] = n->note - 42; /* bass note */
+                        unsigned char dmc_sample_index = instr_map[n->instrument - 1].target_instr;
+                        if (instr_map[n->instrument - 1].transpose != 0) {
+                            /* Transpose is used to indicate that this is a "multi-sample" */
+                            /* Ideally there should be a separate attribute for that */
+                            dmc_sample_index += n->note + instr_map[n->instrument - 1].transpose;
                         }
+                        data[pos++] = dmc_sample_index;
                     } else
                         data[pos++] = END_ROW_COMMAND;
                     break;
