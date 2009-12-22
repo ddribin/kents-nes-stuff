@@ -243,12 +243,13 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
     for (row = 0; row < pattern->row_count; row += 8) {
 	int i;
         unsigned char copy[3];
+        unsigned char flags = 0;
         copy[0] = lastinstr;
         copy[1] = lastefftype;
         copy[2] = lasteffparam;
-	/* calculate active rows byte */
-	unsigned char flags = 0;
+	/* First pass: calculate active rows byte */
 	for (i = 0; i < 8; ++i) {
+            int instrument_changed = 0;
             const struct xm_pattern_slot *n = &slots[(row+i)*channel_count];
 	    if (n->note != 0) {
 		flags |= 1 << i;
@@ -256,6 +257,7 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
             if ((n->instrument != 0) && (n->instrument != lastinstr)) {
 		lastinstr = n->instrument;
 		flags |= 1 << i;
+                instrument_changed = 1;
 	    }
             if (n->volume != 0) {
 		if ((n->volume >= 0x10) && (n->volume < 0x50)) {
@@ -266,9 +268,11 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
 		}
 	    }
             if ((n->effect_type != lastefftype)
-		       || ((n->effect_param != lasteffparam)
-			   && (n->effect_param != 0))) {
-		if (n->effect_param != 0)
+                || ((n->effect_param != lasteffparam)
+                    && (n->effect_param != 0))
+                || /* NES: setting instrument resets effect */
+                (instrument_changed && (n->effect_type != 0))) {
+		if ((n->effect_type != 0) && (n->effect_param != 0))
 		    lasteffparam = n->effect_param;
 		lastefftype = n->effect_type;
 		flags |= 1 << i;
@@ -276,11 +280,14 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
 	}
 	data[pos++] = flags;
 
-	/* flags are followed by the actual note+effect data for these 8 rows */
+	/* Second pass: the actual note+effect data for these 8 rows */
+        /* Note that the conditions for outputting data should exactly
+           match those in the first pass! */
         lastinstr = copy[0];
         lastefftype = copy[1];
         lasteffparam = copy[2];
 	for (i = 0; i < 8; ++i) {
+            int instrument_changed = 0;
 	    const struct xm_pattern_slot *n = &slots[(row+i)*channel_count];
 	    if (!(flags & (1 << i)))
                 continue;
@@ -300,11 +307,13 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
 			data[pos++] = SET_INSTRUMENT_COMMAND;
                         data[pos++] = instr_map[n->instrument - 1].target_instr;
                         lastinstr = n->instrument;
+                        instrument_changed = 1;
 		    }
 		    if ((n->effect_type != lastefftype)
 			|| ((n->effect_param != lasteffparam)
 			    && ((n->effect_param != 0)))
-                        || (n->note != 0)) {
+                        || /* NES: setting instrument resets effect */
+                        (instrument_changed && (n->effect_type != 0))) {
                         switch (n->effect_type) {
                             case 0x0:
 			    case 0x1:
@@ -319,7 +328,7 @@ static void convert_xm_pattern_to_nes(const struct xm_pattern *pattern, int chan
                                 if (tp == 0xA)
 				    tp = 6;
 				data[pos++] = SET_EFFECT_COMMAND_BASE | tp;
-				if ((n->effect_param != 0) || (n->effect_type == 0))
+				if ((n->effect_type != 0) && (n->effect_param != 0))
 				    lasteffparam = n->effect_param;
 				if (n->effect_type != 0)
 				    data[pos++] = lasteffparam;
