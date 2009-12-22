@@ -159,15 +159,15 @@ static int parse_instruments_map_file(const char *path, struct instr_mapping *ma
             pos += len;
         }
         if (ok) {
-            if (source_instr < 0) {
+            if (source_instr <= 0) {
                 fprintf(stderr, "%s:%d: source attribute not specified\n", path, lineno);
                 ok = 0;
                 break;
             }
             if (target_instr >= 0)
-                map[source_instr].target_instr = target_instr;
+                map[source_instr-1].target_instr = target_instr;
             if (transpose != 0)
-                map[source_instr].transpose = transpose;
+                map[source_instr-1].transpose = transpose;
         }
     }
     fclose(fp);
