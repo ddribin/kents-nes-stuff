@@ -107,6 +107,8 @@ static int parse_instruments_map_file(const char *path, struct instr_mapping *ma
         int transpose = 0;
         int pos = 0;
         ++lineno;
+        if (line[pos] == '#')
+            continue; /* Comment */
         while (line[pos] && (line[pos] != '\n')) {
             int len;
             int attr = -1;
