@@ -1,0 +1,23 @@
+ram{start=$000,end=$1C0}
+ram{start=$200,end=$800}
+link{file=build/nsfheader.o}
+# Bank 0
+bank{size=$4000,origin=$C000}
+link{file=build/bitmasktable.o}
+link{file=build/periodtable.o}
+link{file=build/volumetable.o}
+link{file=build/envelope.o}
+link{file=build/effect.o}
+link{file=build/tonal.o}
+link{file=build/dmc.o}
+link{file=build/mixer.o}
+link{file=build/sequencer.o}
+link{file=build/sound.o}
+link{file=build/tablecall.o}
+link{file=build/song.o}
+link{file=build/songtable.o}
+pad{origin=$E800}
+link{file=build/dmcdata.o}
+pad{origin=$FC00}
+copy{file=bassdrum.bin}
+copy{file=snare.bin}
