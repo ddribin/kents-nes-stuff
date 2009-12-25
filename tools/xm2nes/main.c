@@ -324,6 +324,7 @@ int main(int argc, char *argv[])
             strncpy(prefix, begin, len);
             options.label_prefix = prefix;
 
+            fprintf(stdout, "; Generated from %s by %s\n", input_filename, program_version);
             convert_xm_to_nes(&xm, &options, out);
 
             free(prefix);
