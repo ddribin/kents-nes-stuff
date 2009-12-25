@@ -328,6 +328,8 @@ int main(int argc, char *argv[])
 
             free(prefix);
         }
+        if (output_filename)
+            fclose(out);
 
         if (verbose)
             fprintf(stdout, "Done.\n");
