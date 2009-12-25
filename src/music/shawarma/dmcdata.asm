@@ -1,3 +1,20 @@
+;
+;    Copyright (C) 2009 Kent Hansen.
+;
+;    This program is free software; you can redistribute it and/or modify
+;    it under the terms of the GNU General Public License as published by
+;    the Free Software Foundation; either version 3 of the License, or
+;    (at your option) any later version.
+;
+;    This program is distributed in the hope that it will be useful,
+;    but WITHOUT ANY WARRANTY; without even the implied warranty of
+;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;    GNU General Public License for more details.
+;
+;    You should have received a copy of the GNU General Public License
+;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;
+
 sample0:
 .db $AA,$AA,$AA,$C0,$FF,$9A,$CC,$9E,$C4,$79,$66,$D5,$55,$EF,$B1,$A7
 .db $B9,$AA,$AA,$AA,$AA,$AA,$AA,$10,$4A,$08,$97,$AA,$AA,$AA,$AA,$AA
@@ -68,7 +85,6 @@ sample1:
 
 .public dmc_sample_table
 dmc_sample_table:
-;.pad 4*42
 ;.db $0F,$00,(sample0-$C000)/64,$37
 .db $0F,$00,(sample0-$C000)/64,$1F
 .db $0F,$00,(sample1-$C000)/64,$20
