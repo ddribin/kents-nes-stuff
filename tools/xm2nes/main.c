@@ -165,6 +165,15 @@ static int parse_instruments_map_file(const char *path, struct instr_mapping *ma
                 fprintf(stderr, "%s:%d: source attribute not specified\n", path, lineno);
                 ok = 0;
                 break;
+            } else if (source_instr > 128) {
+                fprintf(stderr, "%s:%d: invalid source instrument\n", path, lineno);
+                ok = 0;
+                break;
+            }
+            if (target_instr >= 64) {
+                fprintf(stderr, "%s:%d: invalid target instrument\n", path, lineno);
+                ok = 0;
+                break;
             }
             if (target_instr >= 0)
                 map[source_instr-1].target_instr = target_instr;
