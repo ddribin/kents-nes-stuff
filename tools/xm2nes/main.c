@@ -175,10 +175,11 @@ static int parse_instruments_map_file(const char *path, struct instr_mapping *ma
                 ok = 0;
                 break;
             }
+            --source_instr; /* make it 0-based */
             if (target_instr >= 0)
-                map[source_instr-1].target_instr = target_instr;
+                map[source_instr].target_instr = target_instr;
             if (transpose != 0)
-                map[source_instr-1].transpose = transpose;
+                map[source_instr].transpose = transpose;
         }
     }
     fclose(fp);
