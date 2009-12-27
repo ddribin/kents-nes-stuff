@@ -1,9 +1,9 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>xm2nes</title><meta name="generator" content="DocBook XSL Stylesheets V1.71.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="refentry" lang="en"><a name="xm2nes"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>xm2nes &#8212; converts Fasttracker ][ eXtended Module (XM) files to Kent's NES music format</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">xm2nes</code>  [
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>xm2nes</title><meta name="generator" content="DocBook XSL Stylesheets V1.74.3"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="refentry" lang="en"><a name="xm2nes"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>xm2nes &#8212; converts Fasttracker ][ eXtended Module (XM) files to Kent's NES music format</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">xm2nes</code>  [
   <code class="option">option</code>
-...] {file}</p></div></div><div class="refsect1" lang="en"><a name="id418739"></a><h2>Description</h2><p>
-<span><strong class="command">xm2nes</strong></span> reads an eXtended Module (XM) file and
+...] {file}</p></div></div><div class="refsect1" lang="en"><a name="id465194"></a><h2>Description</h2><p>
+<span class="command"><strong>xm2nes</strong></span> reads an eXtended Module (XM) file and
 converts it to the format used by Kent's NES music player.
-</p></div><div class="refsect1" lang="en"><a name="id447031"></a><h2>Options</h2><div class="variablelist"><dl><dt><span class="term">
+</p></div><div class="refsect1" lang="en"><a name="id472459"></a><h2>Options</h2><div class="variablelist"><dl><dt><span class="term">
 <code class="option">--output</code>=<em class="parameter"><code>file</code></em>
 </span></dt><dd><p>
 Store the output in <em class="parameter"><code>file</code></em>.
@@ -45,7 +45,7 @@ Give a short usage message.
 <code class="option">--version</code>
 </span></dt><dd><p>
 Print program version.
-</p></dd></dl></div></div><div class="refsect1" lang="en"><a name="id427473"></a><h2>Files</h2><div class="refsect2" lang="en"><a name="id434325"></a><h3>Instrument Mapping File</h3><p>
+</p></dd></dl></div></div><div class="refsect1" lang="en"><a name="id451043"></a><h2>Files</h2><div class="refsect2" lang="en"><a name="id458167"></a><h3>Instrument Mapping File</h3><p>
 This input file is optional; it enables custom mapping of input
 instruments to output instruments. The file is a plaintext file, each
 line containing one or more name:value pairs. Example:
@@ -55,9 +55,9 @@ source:10 target:0 transpose:-6
 The above line tells the converter to map instrument 10 in the
 input to instrument 0 in the output, and to transpose each note
 for that instrument by -6 in the output.
-</p></div><div class="refsect2" lang="en"><a name="id434761"></a><h3>Output</h3><p>
+</p></div><div class="refsect2" lang="en"><a name="id463821"></a><h3>Output</h3><p>
 The output is assembly source code.
-</p></div></div><div class="refsect1" lang="en"><a name="id429497"></a><h2>Examples</h2><p>
+</p></div></div><div class="refsect1" lang="en"><a name="id469386"></a><h2>Examples</h2><p>
 To convert <code class="literal">mysong.xm</code>:
 </p><p>
 <strong class="userinput"><code>
@@ -76,4 +76,21 @@ and call the result "middle":
 <strong class="userinput"><code>
 xm2nes --order-start=3 --order-end=5 --label-prefix=middle mysong.xm
 </code></strong>
+</p></div><div class="refsect1" lang="en"><a name="id449913"></a><h2>Unsupported Effects</h2><p>
+The following effects are not supported, or only partially supported,
+in this version. Unsupported effects are ignored by the converter.
+</p><p>
+</p><div class="itemizedlist"><ul type="disc"><li><p>
+8 (set panning position). The NES audio hardware doesn't support panning.
+</p></li><li><p>
+9 (set sample offset). (Would make sense to implement for DMC.)
+</p></li><li><p>
+B (position jump).
+</p></li><li><p>
+D (pattern break).
+</p></li><li><p>
+E. Only EC (note cut) is supported.
+</p></li><li><p>
+G and above.
+</p></li></ul></div><p>
 </p></div></div></body></html>

@@ -210,4 +210,46 @@ xm2nes --order-start=3 --order-end=5 --label-prefix=middle mysong.xm
 </para>
 </refsect1>
 
+<refsect1>
+<title>Unsupported Effects</title>
+<para>
+The following effects are not supported, or only partially supported,
+in this version. Unsupported effects are ignored by the converter.
+</para>
+<para>
+<itemizedlist>
+<listitem>
+<para>
+8 (set panning position). The NES audio hardware doesn't support panning.
+</para>
+</listitem>
+<listitem>
+<para>
+9 (set sample offset). (Would make sense to implement for DMC.)
+</para>
+</listitem>
+<listitem>
+<para>
+B (position jump).
+</para>
+</listitem>
+<listitem>
+<para>
+D (pattern break).
+</para>
+</listitem>
+<listitem>
+<para>
+E. Only EC (note cut) is supported.
+</para>
+</listitem>
+<listitem>
+<para>
+G and above.
+</para>
+</listitem>
+</itemizedlist>
+</para>
+</refsect1>
+
 </refentry>

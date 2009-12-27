@@ -1,115 +1,196 @@
+'\" t
 .\"     Title: xm2nes
 .\"    Author: Kent Hansen
-.\" Generator: DocBook XSL Stylesheets v1.71.1 <http://docbook.sf.net/>
-.\"      Date: 12/22/2009
-.\"    Manual: 
-.\"    Source: 
+.\" Generator: DocBook XSL Stylesheets v1.74.3 <http://docbook.sf.net/>
+.\"      Date: 12/27/2009
+.\"    Manual: [FIXME: manual]
+.\"    Source: [FIXME: source]
+.\"  Language: English
 .\"
-.TH "XM2NES" "1" "12/22/2009" "" ""
+.TH "XM2NES" "1" "12/27/2009" "[FIXME: source]" "[FIXME: manual]"
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
 .\" disable hyphenation
 .nh
 .\" disable justification (adjust text to left margin only)
 .ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
 .SH "NAME"
-xm2nes \- converts Fasttracker ][ eXtended Module (XM) files to Kent's NES music format
+xm2nes \- converts Fasttracker ][ eXtended Module (XM) files to Kent\'s NES music format
 .SH "SYNOPSIS"
-.HP 7
+.HP \w'\fBxm2nes\fR\ 'u
 \fBxm2nes\fR [\fBoption\fR...] {file}
 .SH "DESCRIPTION"
 .PP
 
 \fBxm2nes\fR
-reads an eXtended Module (XM) file and converts it to the format used by Kent's NES music player.
+reads an eXtended Module (XM) file and converts it to the format used by Kent\'s NES music player\&.
 .SH "OPTIONS"
 .PP
 \fB\-\-output\fR=\fIfile\fR
 .RS 4
 Store the output in
-\fIfile\fR. If this option is not specified, the output will be written to standard output.
+\fIfile\fR\&. If this option is not specified, the output will be written to standard output\&.
 .RE
 .PP
 \fB\-\-channels\fR=\fIchannels\fR
 .RS 4
 Only process the channels defined by the list of
-\fIchannels\fR.
+\fIchannels\fR\&.
 .RE
 .PP
 \fB\-\-instruments\-map\fR=\fIfile\fR
 .RS 4
 Reads instrument mapping information from
-\fIfile\fR.
+\fIfile\fR\&.
 .RE
 .PP
 \fB\-\-label\-prefix\fR=\fIprefix\fR
 .RS 4
 Prefix 6502 assembly labels by
-\fIprefix\fR.
+\fIprefix\fR\&.
 .RE
 .PP
 \fB\-\-order\-start\fR=\fIoffset\fR
 .RS 4
 Start reading pattern order table from
-\fIoffset\fR.
+\fIoffset\fR\&.
 .RE
 .PP
 \fB\-\-order\-end\fR=\fIoffset\fR
 .RS 4
 Stop reading pattern order table at
-\fIoffset\fR.
+\fIoffset\fR\&.
 .RE
 .PP
 \fB\-\-verbose\fR
 .RS 4
-Print progress information to standard output.
+Print progress information to standard output\&.
 .RE
 .PP
 \fB\-\-help\fR
 .RS 4
-Give a help list.
+Give a help list\&.
 .RE
 .PP
 \fB\-\-usage\fR
 .RS 4
-Give a short usage message.
+Give a short usage message\&.
 .RE
 .PP
 \fB\-\-version\fR
 .RS 4
-Print program version.
+Print program version\&.
 .RE
 .SH "FILES"
 .SS "Instrument Mapping File"
 .PP
-This input file is optional; it enables custom mapping of input instruments to output instruments. The file is a plaintext file, each line containing one or more name:value pairs. Example:
+This input file is optional; it enables custom mapping of input instruments to output instruments\&. The file is a plaintext file, each line containing one or more name:value pairs\&. Example:
 .PP
 source:10 target:0 transpose:\-6
 .PP
-The above line tells the converter to map instrument 10 in the input to instrument 0 in the output, and to transpose each note for that instrument by \-6 in the output.
+The above line tells the converter to map instrument 10 in the input to instrument 0 in the output, and to transpose each note for that instrument by \-6 in the output\&.
 .SS "Output"
 .PP
-The output is assembly source code.
+The output is assembly source code\&.
 .SH "EXAMPLES"
 .PP
 To convert
-mysong.xm:
+mysong\&.xm:
 .PP
 
-\fB xm2nes mysong.xm \fR
+\fB xm2nes mysong\&.xm \fR
 .PP
 To convert only channels 0 and 2 of
-mysong.xm:
+mysong\&.xm:
 .PP
 
-\fB xm2nes \-\-channels=0,2 mysong.xm \fR
+\fB xm2nes \-\-channels=0,2 mysong\&.xm \fR
 .PP
 To convert only the order table range [3,5] of
-mysong.xm, and call the result "middle":
+mysong\&.xm, and call the result "middle":
 .PP
 
-\fB xm2nes \-\-order\-start=3 \-\-order\-end=5 \-\-label\-prefix=middle mysong.xm \fR
+\fB xm2nes \-\-order\-start=3 \-\-order\-end=5 \-\-label\-prefix=middle mysong\&.xm \fR
+.SH "UNSUPPORTED EFFECTS"
+.PP
+The following effects are not supported, or only partially supported, in this version\&. Unsupported effects are ignored by the converter\&.
+.PP
+
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+8 (set panning position)\&. The NES audio hardware doesn\'t support panning\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+9 (set sample offset)\&. (Would make sense to implement for DMC\&.)
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+B (position jump)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+D (pattern break)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+E\&. Only EC (note cut) is supported\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+G and above\&.
+.RE
+.sp
+.RE
 .SH "AUTHOR"
 .PP
 \fBKent Hansen\fR
-.sp -1n
-.IP "" 4
+.RS 4
 Author.
+.RE
