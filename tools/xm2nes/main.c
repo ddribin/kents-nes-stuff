@@ -95,11 +95,13 @@ static int parse_instruments_map_file(const char *path, struct instr_mapping *ma
     int ok;
     int lineno;
     char line[1024];
+    int defined_set[128/(sizeof(int)*8)];
     FILE *fp = fopen(path, "rt");
     if (!fp) {
         fprintf(stderr, "xm2nes: failed to open `%s' for reading\n", path);
         return 0;
     }
+    memset(defined_set, 0, sizeof(defined_set));
     ok = 1;
     while (ok && fgets(line, 1023, fp) != NULL) {
         int source_instr = -1;
@@ -176,10 +178,17 @@ static int parse_instruments_map_file(const char *path, struct instr_mapping *ma
                 break;
             }
             --source_instr; /* make it 0-based */
+            if (defined_set[source_instr / (sizeof(int)*8)]
+                & (1 << (source_instr & (sizeof(int)*8-1)))) {
+                fprintf(stderr, "%s:%d: instrument already mapped\n", path, lineno);
+                ok = 0;
+                break;
+            }
             if (target_instr >= 0)
                 map[source_instr].target_instr = target_instr;
             if (transpose != 0)
                 map[source_instr].transpose = transpose;
+            defined_set[source_instr / (sizeof(int)*8)] |= 1 << (source_instr & (sizeof(int)*8-1));
         }
     }
     fclose(fp);
